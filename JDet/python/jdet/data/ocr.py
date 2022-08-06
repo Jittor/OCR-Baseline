@@ -55,23 +55,26 @@ class OCRDataset(Dataset):
     '''
     CLASSES = ['signboard']
 
-    def __init__(self, dataset_dir=None, transforms=None, batch_size=1, num_workers=0, shuffle=False, drop_last=False, filter_empty_gt=True, filter_min_size=-1):
+    def __init__(self, dataset_dir=None, img_dir=None, gt_dir=None,transforms=None, batch_size=1, num_workers=0, shuffle=False, drop_last=False, filter_empty_gt=True, filter_min_size=-1):
         super(OCRDataset, self).__init__(batch_size=batch_size,
                                          num_workers=num_workers, shuffle=shuffle, drop_last=drop_last)
         self.images_dir = os.path.abspath(
-            os.path.join(dataset_dir, "imgs"))
+            os.path.join(dataset_dir, img_dir))
         self.annotations_file = os.path.abspath(
-            os.path.join(dataset_dir, "labels"))
+            os.path.join(dataset_dir, gt_dir))
 
         self.transforms = Compose(transforms)
 
-        images = os.listdir(self.images_dir)
-        self.images_name = [img.split('.')[0] for img in images]
-        self.images = [os.path.join(self.images_dir, img) for img in images]
-        self.gts = [os.path.join(self.annotations_file, name+'.txt')
-                    for name in self.images_name]
-        self.total_len = len(self.images_name)
+        self.img_ids = self.get_ids()
+        self.images = [os.path.join(self.images_dir, id+'.jpg') for id in self.img_ids]
+        self.gts = [os.path.join(self.annotations_file, id+'.txt') for id in self.img_ids]
+        self.total_len = len(self.img_ids)
         print("total_len:", self.total_len)
+
+    def get_ids(self):
+        labels_files = os.listdir(self.annotations_file)
+        ids = [x.rstrip().split(".")[0] for x in labels_files if ".txt" in x]
+        return ids
 
     def read_gt(self, idx):
         f = open(self.gts[idx], 'r')
@@ -117,7 +120,7 @@ class OCRDataset(Dataset):
             ori_img_size=(width, height),
             img_size=(width, height),
             scale_factor=1.0,
-            filename=self.images_name[idx],
+            filename=self.img_ids[idx]+'.jpg',
             img_file=self.images[idx])
         return image, ann
 

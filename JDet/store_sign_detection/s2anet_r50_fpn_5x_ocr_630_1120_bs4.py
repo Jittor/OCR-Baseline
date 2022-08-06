@@ -84,6 +84,8 @@ dataset = dict(
     train=dict(
         type="OCRDataset",
         dataset_dir='/home/gmh/dataset/dataset/dataset/dataset2',
+        img_dir='1306',
+        gt_dir='1306',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -109,6 +111,8 @@ dataset = dict(
     val=dict(
         type="OCRDataset",
         dataset_dir='/home/gmh/dataset/dataset/dataset/dataset2',
+        img_dir='1306',
+        gt_dir='1306',
         transforms=[
             dict(
                 type="RotatedResize",
