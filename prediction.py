@@ -160,19 +160,19 @@ if __name__ == "__main__":
                         metavar="SAVE PATH")
     parser.add_argument("-j",
                         "--jdet",
-                        default="./JDet/work_dirs/s2anet_r50_fpn_5x_ocr_630_1120_bs4/checkpoints/ckpt_60.pkl",
+                        default="./ckpts/JDet.pkl",
                         type=str,
                         help="path of JDet model.",
                         metavar="JDET MODEL")
     parser.add_argument("-p",
                         "--pixellink",
-                        default="./PixelLink/work_dirs/exp/PixelLink.pkl",
+                        default="./ckpts/PixelLink.pkl",
                         type=str,
                         help="path of PixelLink model.",
                         metavar="PIXELLINK MODEL")
     parser.add_argument("-c",
                         "--crnn",
-                        default="./CRNN/checkpoints/CRNN.pkl",
+                        default="./ckpts/CRNN.pkl",
                         type=str,
                         help="path of CRNN model",
                         metavar="CRNN MODEL")

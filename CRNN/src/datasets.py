@@ -158,7 +158,7 @@ class TencentData(CommonDataset):
 
     def get_ids(self):
         labels_files = os.listdir(self.labels_dir)
-        ids = [x.rstrip().split(".")[0] for x in labels_files]
+        ids = [x.rstrip().split(".")[0] for x in labels_files if ".txt" in x]
         if self.mode == "train":
             ids = ids
         elif self.mode == "val":

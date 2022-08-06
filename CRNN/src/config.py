@@ -20,10 +20,10 @@ pred_threshold = 0.6
 valid_interval = 1000  # 2000
 save_interval = valid_interval * 2  # 8000
 
-datasets_path = os.path.join("/home/gmh/dataset/dataset/dataset")
+datasets_path = os.path.join("/home/gmh/dataset/dataset/dataset/dataset3")
 
-images_dir = os.path.join(datasets_path, 'dataset3', 'imgs')
-labels_dir = os.path.join(datasets_path, 'dataset3', 'labels')
+images_dir = os.path.join(datasets_path, '1306')
+labels_dir = os.path.join(datasets_path, '1306')
 
 # pretrain dataset - Synthetic Chinese String Dataset
 pretrain_images_dir = "/mnt/disk/gmh/dataset/chinese/images/"

@@ -45,8 +45,8 @@ class TencentDataLoader(Dataset):
             self.gts.append(self.get_bboxes(gt_path))
 
     def get_ids(self):
-        img_names = os.listdir(self.cfg.images_dir)
-        ids = [img_name.split(".")[0] for img_name in img_names]
+        labels_files = os.listdir(self.cfg.labels_dir)
+        ids = [x.rstrip().split(".")[0] for x in labels_files if ".txt" in x]
         if self.mode == "train":
             ids = ids
         elif self.mode == "val":
