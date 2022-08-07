@@ -13,22 +13,35 @@
 </div>
 
 ### 1. 安装
-按照原始项目[](https://github.com/Jittor/JDet)安装好相关依赖，在JDet目录下
+
+以baseline代码位置为/project/OCR-Baseline-main为例
+
+编码环境执行
 ```shell
-python setup.py develop
+cd /project/OCR-Baseline-main/JDet
+sh install.sh
 ```
 
 ### 2. 数据集路径配置
 以使用s2anet+ResNet50为例，在store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py中将dataset.train.dataset_dir、img_dir、gt_dir修改为数据集所处路径。
 
 ### 3. 训练
+
 ```python
-python tools/run_net.py --config-file=store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py --task=train
+cd /project/OCR-Baseline-main/JDet
+# 编码环境训练
+sh coding_train.sh
+# 训练环境训练
+sh training_train.sh
 ```
 ### 4. 评估
 在store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py文件最后一行加上resume_path="JDet.pkl"
 
 执行评估：
 ```python
-python tools/run_net.py --config-file=store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py --task=val
+cd /project/OCR-Baseline-main/JDet
+# 编码环境训练
+sh coding_eval.sh
+# 训练环境训练
+sh training_eval.sh
 ```
