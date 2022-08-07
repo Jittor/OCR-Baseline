@@ -57,9 +57,9 @@ parser.add_argument("--save_interval",
                     metavar="SAVE INTERVAL")
 parser.add_argument("-n",
                     "--cpu_workers",
-                    default=16,
+                    default=1,
                     type=int,
-                    help="number of cpu workers used to load data [default: 16]",
+                    help="number of cpu workers used to load data [default: 1]",
                     metavar="CPU WORKERS")
 parser.add_argument("-r",
                     "--reload_checkpoint",

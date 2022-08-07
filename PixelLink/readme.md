@@ -12,9 +12,13 @@
 
 ## 使用说明
 
-### 1. 数据集路径配置
+### 1. 路径配置
+数据集路径配置:    
+在 ```PixelLink/config_pl.py``` 中将 ```Config.dataset_path``` 配置为数据集所处路径。   
 
-在 ```PixelLink/config_pl.py``` 中将 ```Config.dataset_path``` 配置为数据集所处路径。
+模型保存路径配置：   
+在 ```PixelLink/config_pl.py``` 中将 ```Config.save_dir``` 配置为需要的保存路径。  
+
 
 ### 2. 训练
 ```python

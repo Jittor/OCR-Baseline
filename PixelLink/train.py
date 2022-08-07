@@ -125,8 +125,8 @@ def main():
     val_dataloader = TencentDataLoader(cfg, mode="val", transform=val_transform, batch_size=1,
                                        shuffle=False, num_workers=cfg.num_workers)
 
-#     model = VGGPixel()
-    model = VGGPixel(pretrained=True)
+    model = VGGPixel()
+    # model = VGGPixel(pretrained=True)
     
     optimizer = optim.SGD(model.parameters(),
                           lr=cfg.lr,

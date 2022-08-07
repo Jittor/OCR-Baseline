@@ -4,7 +4,7 @@ import json
 
 
 def init():  # 模型初始化
-    model = Pipeline()  ###开发者需要自行设计深度学习模型
+    model = Pipeline()
     return model
 
 
@@ -70,4 +70,4 @@ if __name__ == "__main__":
     net = init()
     input_image = cv2.imread('/mnt/disk/llt/data/demo/010003_1508413314371766.jpg')
     output = process_image(net, input_image)
-    print(output)
+    print(json.loads(output))

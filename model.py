@@ -15,12 +15,12 @@ curr_path = os.path.dirname(__file__)
 
 class Pipeline:
     def __init__(self,
-                 jdet_path=os.path.join(curr_path, "../../ckpts/JDet.pkl"),
-                 pixellink_path=os.path.join(curr_path, "../../ckpts/PixelLink.pkl"),
-                 crnn_path=os.path.join(curr_path, "../../ckpts/CRNN.pkl"),
+                 jdet_path=os.path.join(curr_path, "./ckpts/JDet.pkl"),
+                 pixellink_path=os.path.join(curr_path, "./ckpts/PixelLink.pkl"),
+                 crnn_path=os.path.join(curr_path, "./ckpts/CRNN.pkl"),
                  ):
         # Load models
-        self.model1 = Step1(os.path.join(curr_path, '../../JDet/store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py'), jdet_path)
+        self.model1 = Step1(os.path.join(curr_path, './JDet/store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py'), jdet_path)
         self.model2 = Step2(pixellink_path)
         self.model3 = Step3(crnn_path)
 

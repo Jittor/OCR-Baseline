@@ -14,7 +14,7 @@ class Config(object):
         self.lr = 1e-3  # 1e-3
         self.weight_decay = 5e-4
         self.batch_size = 8  # 8
-        self.num_workers = 8
+        self.num_workers = 1  # 8
         self.momentum = 0.9
 
         self.pixel_weight = 2
