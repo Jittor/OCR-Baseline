@@ -205,8 +205,9 @@ resnet34 = Resnet34
 @BACKBONES.register_module()
 def Resnet50(pretrained=False, **kwargs):
     model = _resnet(Bottleneck, [3, 4, 6, 3], **kwargs)
-    if pretrained: model.load("jittorhub://resnet50.pkl")
+    if pretrained: model.load(pretrained)
     return model
+
 
 @BACKBONES.register_module()
 def Resnet38(**kwargs):

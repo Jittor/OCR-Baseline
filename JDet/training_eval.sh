@@ -1,1 +1,1 @@
-python /project/OCR-Baseline-main/JDet/tools/run_net.py --config-file=/project/OCR-Baseline-main/JDet/store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py --task=val
+use_parallel_op_compiler=8 python /project/OCR-Baseline-main/JDet/tools/run_net.py --config-file=/project/OCR-Baseline-main/JDet/store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py --task=val
