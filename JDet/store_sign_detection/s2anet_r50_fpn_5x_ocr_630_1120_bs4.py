@@ -83,9 +83,9 @@ model = dict(
 dataset = dict(
     train=dict(
         type="OCRDataset",
-        dataset_dir='/home/gmh/dataset/dataset/dataset/dataset2',
-        img_dir='1306',
-        gt_dir='1306',
+        dataset_dir='/home/data',
+        img_dir='1305',
+        gt_dir='1305',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -110,9 +110,9 @@ dataset = dict(
     ),
     val=dict(
         type="OCRDataset",
-        dataset_dir='/home/gmh/dataset/dataset/dataset/dataset2',
-        img_dir='1306',
-        gt_dir='1306',
+        dataset_dir='/home/data',
+        img_dir='1305',
+        gt_dir='1305',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -131,27 +131,6 @@ dataset = dict(
         batch_size=2,
         num_workers=4,
         shuffle=False
-    ),
-    test=dict(
-        type="ImageDataset",
-        images_dir='/home/gmh/dataset/dataset/dataset/dataset2/imgs',
-        transforms=[
-            dict(
-                type="RotatedResize",
-                min_size=630,
-                max_size=1120,
-            ),
-            dict(
-                type="Pad",
-                size_divisor=32),
-            dict(
-                type="Normalize",
-                mean=[123.675, 116.28, 103.53],
-                std=[58.395, 57.12, 57.375],
-                to_bgr=False),
-        ],
-        batch_size=1,
-        num_workers=4,
     )
 )
 
