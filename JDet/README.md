@@ -14,11 +14,11 @@
 
 ### 1. 安装
 
-以baseline代码位置为/project/OCR-Baseline-main为例
+以baseline代码位置为/project/train/src_repo/OCR-Baseline-main为例
 
 编码环境执行
 ```shell
-cd /project/OCR-Baseline-main/JDet
+cd /project/train/src_repo/OCR-Baseline-main/JDet
 sh install.sh
 ```
 
@@ -28,7 +28,7 @@ sh install.sh
 ### 3. 训练
 
 ```python
-cd /project/OCR-Baseline-main/JDet
+cd /project/train/src_repo/OCR-Baseline-main/JDet
 # 编码环境训练
 sh coding_train.sh
 # 训练环境训练
@@ -39,7 +39,7 @@ sh training_train.sh
 
 执行评估：
 ```python
-cd /project/OCR-Baseline-main/JDet
+cd /project/train/src_repo/OCR-Baseline-main/JDet
 # 编码环境训练
 sh coding_eval.sh
 # 训练环境训练
