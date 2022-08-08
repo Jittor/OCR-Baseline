@@ -1,10 +1,17 @@
-from models.vgg import VGGPixel
-from tools import postprocess
-from dataset.transform import build_transform
-from config_pl import cfg
 import numpy as np
 from PIL import Image
 import jittor as jt
+import os
+import sys
+
+curr_path = os.path.dirname(__file__)
+sys.path.extend([
+    os.path.join(curr_path, '../'),
+    ])
+from PixelLink.models.vgg import VGGPixel
+from PixelLink.tools import postprocess
+from PixelLink.dataset.transform import build_transform
+from PixelLink.config_pl import cfg
 
 
 def get_xywh(gt):
