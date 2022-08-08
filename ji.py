@@ -68,6 +68,9 @@ ev_sdk输出json样例
 
 if __name__ == "__main__":
     net = init()
-    input_image = cv2.imread('/mnt/disk/llt/data/demo/010003_1508413314371766.jpg')
+    input_image = cv2.imread('/home/data/1305/011284_1508290961970980.jpg')
     output = process_image(net, input_image)
     print(json.loads(output))
+
+
+# python /project/ev_sdk/src/ji.py

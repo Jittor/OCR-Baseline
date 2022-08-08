@@ -3,9 +3,13 @@ import numpy as np
 import cv2
 import sys
 import os
-
-sys.path.extend(['../../', '../../PixelLink', '../../CRNN', '../../CRNN/src'])
-sys.path.extend(['./', 'PixelLink', 'CRNN', 'CRNN/src'])
+curr_path = os.path.dirname(__file__)
+sys.path.extend([
+    os.path.join(curr_path, './'),
+    os.path.join(curr_path, './PixelLink'),
+    os.path.join(curr_path, './CRNN'),
+    os.path.join(curr_path, './CRNN/src'),
+    ])
 from JDet.step1 import Step1
 from PixelLink.step2 import Step2
 from CRNN.step3 import Step3
@@ -15,9 +19,9 @@ curr_path = os.path.dirname(__file__)
 
 class Pipeline:
     def __init__(self,
-                 jdet_path=os.path.join(curr_path, "./ckpts/JDet.pkl"),
-                 pixellink_path=os.path.join(curr_path, "./ckpts/PixelLink.pkl"),
-                 crnn_path=os.path.join(curr_path, "./ckpts/CRNN.pkl"),
+                 jdet_path=os.path.join(curr_path, "/project/train/models/JDet.pkl"),
+                 pixellink_path=os.path.join(curr_path, "/project/train/models/PixelLink.pkl"),
+                 crnn_path=os.path.join(curr_path, "/project/train/models/CRNN.pkl"),
                  ):
         # Load models
         self.model1 = Step1(os.path.join(curr_path, './JDet/store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py'), jdet_path)
@@ -29,7 +33,8 @@ class Pipeline:
         image = Image.fromarray(image)
         signboard_bbox_list = list()
         text_list = list()
-
+        # jt.display_memory_info()
+        
         # Step 1 JDet
         signboard_bboxes = self.model1.infer(image)
         signboards = list()
@@ -134,6 +139,6 @@ def output_result(texts, signboard_boxes):
 
 if __name__ == "__main__":
     pipeline = Pipeline()
-    img = cv2.imread('/mnt/disk/llt/data/demo/010003_1508413314371766.jpg')
+    img = cv2.imread('/home/data/1305/011284_1508290961970980.jpg')
     results = pipeline(img)
     print(results)
