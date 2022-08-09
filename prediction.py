@@ -1,3 +1,5 @@
+from CRNN.step3 import Step3
+from PixelLink.step2 import Step2
 from argparse import ArgumentParser
 import os
 from tqdm import tqdm
@@ -7,8 +9,6 @@ import sys
 from JDet.step1 import Step1
 
 sys.path.extend(['PixelLink', 'CRNN', 'CRNN/src'])
-from PixelLink.step2 import Step2
-from CRNN.step3 import Step3
 
 
 def sort_point(gt):
@@ -45,7 +45,8 @@ def crop_img(bounding_box, img):
     x_2, y_2, w_2, h_2 = get_xywh(bounding_box)
     if x_2 > iw or y_2 > ih or w_2 == 0 or h_2 == 0:
         return None
-    new_img = Image.fromarray(np.array(img)[y_2:min(y_2 + h_2, ih), x_2:min(x_2 + w_2, iw)])
+    new_img = Image.fromarray(
+        np.array(img)[y_2:min(y_2 + h_2, ih), x_2:min(x_2 + w_2, iw)])
     return new_img
 
 
@@ -148,7 +149,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-i",
                         "--image_dir",
-                        default="/home/gmh/dataset/dataset/test_dataset/imgs",
+                        default="dataset/test_dataset/imgs",
                         type=str,
                         help="path of image files.",
                         metavar="IMAGES PATH")

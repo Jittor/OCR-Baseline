@@ -21,7 +21,7 @@ scheduler=dict(
 )
 dataset = dict(
     val=dict(
-        path='/mnt/disk/wang/coco128/images/train2017',
+        path='wang/coco128/images/train2017',
         batch_size = batch_size,
         num_workers=8,
         stride=stride,
@@ -29,14 +29,14 @@ dataset = dict(
 
         ),
         test=dict(
-        path='/mnt/disk/wang/coco128/images/train2017',
+        path='wang/coco128/images/train2017',
         batch_size = batch_size,
         num_workers=8,
         stride=stride,
         imgsz=imgsz_test
         ),
     train=dict(
-        path='/mnt/disk/wang/coco128/images/train2017',
+        path='wang/coco128/images/train2017',
         batch_size = batch_size,
         num_workers=8,
         stride=stride,

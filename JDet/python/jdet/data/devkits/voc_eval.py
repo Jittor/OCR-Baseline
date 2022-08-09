@@ -2,13 +2,14 @@
 import numpy as np
 from jdet.ops.nms_poly import iou_poly
 
+
 def parse_gt(filename):
     """
     :param filename: ground truth file to parse
     :return: all instances in a picture
     """
     objects = []
-    with  open(filename, 'r') as f:
+    with open(filename, 'r') as f:
         while True:
             line = f.readline()
             if line:
@@ -142,7 +143,7 @@ def voc_eval(detpath,
     sorted_ind = np.argsort(-confidence)
     sorted_scores = np.sort(-confidence)
 
-    ## note the usage only in numpy not for list
+    # note the usage only in numpy not for list
     BB = BB[sorted_ind, :]
     image_ids = [image_ids[x] for x in sorted_ind]
     # go down dets and mark TPs and FPs
@@ -155,7 +156,7 @@ def voc_eval(detpath,
         ovmax = -np.inf
         BBGT = R['bbox'].astype(float)
 
-        ## compute det bb with each BBGT
+        # compute det bb with each BBGT
         if BBGT.size > 0:
             # compute overlaps
             # intersection
@@ -233,32 +234,32 @@ def voc_eval(detpath,
     return rec, prec, ap
 
 
-def voc_eval_dota(dets,gts,iou_func,ovthresh=0.5,use_07_metric=False):
+def voc_eval_dota(dets, gts, iou_func, ovthresh=0.5, use_07_metric=False):
     dets = np.array(dets.tolist())
     npos = sum([sum(~gts[k]["difficult"]) for k in gts])
     nd = len(dets)
-    if nd==0 or npos==0:
-        return 0.,0.,0.
+    if nd == 0 or npos == 0:
+        return 0., 0., 0.
 
-    confidence = dets[:,-1]
-    dets = dets[:,:-1]
+    confidence = dets[:, -1]
+    dets = dets[:, :-1]
 
     # sort by confidence
     sorted_ind = np.argsort(-confidence)
     scores = confidence[sorted_ind]
 
-    ## note the usage only in numpy not for list
+    # note the usage only in numpy not for list
     dets = dets[sorted_ind, :]
     # go down dets and mark TPs and FPs
     tp = np.zeros(nd)
     fp = np.zeros(nd)
-    for d,det in enumerate(dets):
+    for d, det in enumerate(dets):
         bb = det[1:].astype(float)
         ovmax = -np.inf
         R = gts[int(det[0])]
         BBGT = R["box"].astype(float)
 
-        ## compute det bb with each BBGT
+        # compute det bb with each BBGT
         if BBGT.size > 0:
             # compute overlaps
             # intersection
@@ -335,10 +336,12 @@ def voc_eval_dota(dets,gts,iou_func,ovthresh=0.5,use_07_metric=False):
 
     return rec, prec, ap
 
+
 def main():
     detpath = r'test_/{:s}.txt'
-    annopath = r'/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/labelTxt/{:s}.txt'  # change the directory to the path of val/labelTxt, if you want to do evaluation on the valset
-    imagesetfile = r'/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/test.txt'
+    # change the directory to the path of val/labelTxt, if you want to do evaluation on the valset
+    annopath = r'dataset/DOTA_1024/trainval_split/labelTxt/{:s}.txt'
+    imagesetfile = r'dataset/DOTA_1024/trainval_split/test.txt'
 
     # For DOTA-v1.5
     # classnames = ['plane', 'baseball-diamond', 'bridge', 'ground-track-field', 'small-vehicle', 'large-vehicle', 'ship', 'tennis-court',

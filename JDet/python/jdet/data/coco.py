@@ -382,7 +382,7 @@ class COCODataset(Dataset):
 
 
 def test_cocodataset():
-    dataset = COCODataset(root="/mnt/disk/lxl/dataset/coco/images/val2017",anno_file="/mnt/disk/lxl/dataset/coco/annotations/instances_val2017.json")
+    dataset = COCODataset(root="dataset/coco/images/val2017",anno_file="dataset/coco/annotations/instances_val2017.json")
     print(len(dataset.CLASSES))
     print(len(dataset.cat_ids))
 

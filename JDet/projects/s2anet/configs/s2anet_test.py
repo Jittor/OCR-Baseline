@@ -4,8 +4,8 @@ model = dict(
     backbone=dict(
         type='Resnet50',
         frozen_stages=1,
-        return_stages=["layer1","layer2","layer3","layer4"],
-        pretrained= True),
+        return_stages=["layer1", "layer2", "layer3", "layer4"],
+        pretrained=True),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
@@ -78,12 +78,12 @@ model = dict(
                 allowed_border=-1,
                 pos_weight=-1,
                 debug=False))
-        )
     )
+)
 dataset = dict(
     train=dict(
         type="DOTADataset",
-        dataset_dir='/home/cxjyxx_me/workspace/JAD/datasets/processed_DOTA/trainval_1024_200_1.0',
+        dataset_dir='workspace/JAD/datasets/processed_DOTA/trainval_1024_200_1.0',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -92,14 +92,14 @@ dataset = dict(
             ),
             # dict(type='RotatedRandomFlip', prob=0.0),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False,)
-            
+
         ],
         batch_size=2,
         num_workers=0,
@@ -107,8 +107,8 @@ dataset = dict(
     ),
     # val=dict(
     #     type="DOTADataset",
-    #     anno_file='/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/trainval1024.pkl',
-    #     image_dir='/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/images/',
+    #     anno_file='dataset/DOTA_1024/trainval_split/trainval1024.pkl',
+    #     image_dir='dataset/DOTA_1024/trainval_split/images/',
     #     transforms=[
     #         dict(
     #             type = "Pad",
@@ -124,8 +124,8 @@ dataset = dict(
     # ),
     test=dict(
         type="ImageDataset",
-        
-        images_dir='/mnt/disk/lxl/dataset/DOTA_1024/test_split/images/',
+
+        images_dir='dataset/DOTA_1024/test_split/images/',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -133,12 +133,12 @@ dataset = dict(
                 max_size=1024
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False,),
         ],
         num_workers=4,
@@ -147,12 +147,12 @@ dataset = dict(
 )
 
 optimizer = dict(
-    type='SGD', 
-    lr=0.01/4., #0.0,#0.01*(1/8.), 
-    momentum=0.9, 
+    type='SGD',
+    lr=0.01/4.,  # 0.0,#0.01*(1/8.),
+    momentum=0.9,
     weight_decay=0.0001,
     grad_clip=dict(
-        max_norm=35, 
+        max_norm=35,
         norm_type=2))
 
 scheduler = dict(
@@ -171,4 +171,3 @@ max_epoch = 12
 eval_interval = 1
 checkpoint_interval = 1
 log_interval = 50
-

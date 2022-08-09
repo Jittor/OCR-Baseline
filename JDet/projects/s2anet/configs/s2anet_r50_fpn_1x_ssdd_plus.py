@@ -4,8 +4,8 @@ model = dict(
     backbone=dict(
         type='Resnet50',
         frozen_stages=1,
-        return_stages=["layer1","layer2","layer3","layer4"],
-        pretrained= True),
+        return_stages=["layer1", "layer2", "layer3", "layer4"],
+        pretrained=True),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
@@ -78,12 +78,12 @@ model = dict(
                 allowed_border=-1,
                 pos_weight=-1,
                 debug=False))
-        )
     )
+)
 dataset = dict(
     train=dict(
         type="SSDDDataset",
-        dataset_dir='/home/cxjyxx_me/workspace/JAD/SAR/datasets/processed_SSDD_plus/train_800',
+        dataset_dir='workspace/JAD/SAR/datasets/processed_SSDD_plus/train_800',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -92,14 +92,14 @@ dataset = dict(
             ),
             dict(type='RotatedRandomFlip', prob=0.5),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False,)
-            
+
         ],
         batch_size=2,
         num_workers=4,
@@ -108,7 +108,7 @@ dataset = dict(
     ),
     val=dict(
         type="SSDDDataset",
-        dataset_dir='/home/cxjyxx_me/workspace/JAD/SAR/datasets/processed_SSDD_plus/val_800',
+        dataset_dir='workspace/JAD/SAR/datasets/processed_SSDD_plus/val_800',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -116,12 +116,12 @@ dataset = dict(
                 max_size=1024
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False),
         ],
         batch_size=2,
@@ -131,12 +131,12 @@ dataset = dict(
 )
 
 optimizer = dict(
-    type='SGD', 
-    lr=0.01/4., #0.0,#0.01*(1/8.), 
-    momentum=0.9, 
+    type='SGD',
+    lr=0.01/4.,  # 0.0,#0.01*(1/8.),
+    momentum=0.9,
     weight_decay=0.0001,
     grad_clip=dict(
-        max_norm=35, 
+        max_norm=35,
         norm_type=2))
 
 scheduler = dict(

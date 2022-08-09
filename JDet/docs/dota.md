@@ -20,8 +20,8 @@ cd $JDet_PATH$
 We can set how the DOTA is preprocessed by editing the `configs/preprocess/dota_preprocess_config.py`:
 ```python
 type='DOTA'
-source_dataset_path='/mnt/disk/cxjyxx_me/JAD/datasets/test/DOTA/'
-target_dataset_path='/mnt/disk/cxjyxx_me/JAD/datasets/test/processed_DOTA/'
+source_dataset_path='datasets/test/DOTA/'
+target_dataset_path='datasets/test/processed_DOTA/'
 
 # available labels: train, val, test, trainval
 tasks=[

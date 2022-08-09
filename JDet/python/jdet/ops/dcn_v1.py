@@ -1,5 +1,5 @@
 import jittor as jt
-from jittor import  nn
+from jittor import nn
 from jittor.misc import _pair
 import math
 
@@ -306,10 +306,12 @@ __global__ void deformable_col2im_coord_gpu_kernel(const int n, const scalar_t *
 }
 
 '''
-def deformable_im2col( data_im, data_offset, channels, height,width, ksize_h, ksize_w,
-    pad_h,  pad_w,  stride_h, stride_w,
-    dilation_h, dilation_w, parallel_imgs,
-    deformable_group, columns_shape):
+
+
+def deformable_im2col(data_im, data_offset, channels, height, width, ksize_h, ksize_w,
+                      pad_h,  pad_w,  stride_h, stride_w,
+                      dilation_h, dilation_w, parallel_imgs,
+                      deformable_group, columns_shape):
 
     src = f"""const int channels = {channels};
     const int height = {height};
@@ -336,14 +338,15 @@ def deformable_im2col( data_im, data_offset, channels, height,width, ksize_h, ks
             height_col, width_col, out0_p);
 
     """
-    return jt.code(columns_shape,data_im.dtype,inputs=[data_im,data_offset],cuda_header = HEADER,cuda_src = src)
+    return jt.code(columns_shape, data_im.dtype, inputs=[data_im, data_offset], cuda_header=HEADER, cuda_src=src)
+
 
 def deformable_col2im_coord(
-    data_col, data_im, data_offset,
-    channels, height, width, ksize_h,
-    ksize_w, pad_h, pad_w,stride_h,
-    stride_w, dilation_h, dilation_w,
-    parallel_imgs, deformable_group, grad_offset_shape):
+        data_col, data_im, data_offset,
+        channels, height, width, ksize_h,
+        ksize_w, pad_h, pad_w, stride_h,
+        stride_w, dilation_h, dilation_w,
+        parallel_imgs, deformable_group, grad_offset_shape):
     src = f"""const int channels = {channels};
     const int height = {height};
     const int width = {width};
@@ -370,17 +373,17 @@ def deformable_col2im_coord(
     parallel_imgs, 2 * ksize_h * ksize_w * deformable_group, deformable_group,
     height_col, width_col, out0_p);
     """
-    return jt.code(grad_offset_shape,data_offset.dtype,[data_col, data_im, data_offset],cuda_header=HEADER,cuda_src=src)
+    return jt.code(grad_offset_shape, data_offset.dtype, [data_col, data_im, data_offset], cuda_header=HEADER, cuda_src=src)
 
- 
+
 def deformable_col2im(
-    data_col, data_offset, channels,
-    height, width, ksize_h,
-    ksize_w, pad_h, pad_w,
-    stride_h, stride_w,
-    dilation_h, dilation_w,
-    parallel_imgs, deformable_group,
-    grad_im_shape):
+        data_col, data_offset, channels,
+        height, width, ksize_h,
+        ksize_w, pad_h, pad_w,
+        stride_h, stride_w,
+        dilation_h, dilation_w,
+        parallel_imgs, deformable_group,
+        grad_im_shape):
     src = f"""const int channels = {channels};
     const int height = {height};
     const int width = {width};
@@ -406,153 +409,193 @@ def deformable_col2im(
             ksize_w, pad_h, pad_w, stride_h, stride_w,
             dilation_h, dilation_w, channel_per_deformable_group,
             parallel_imgs, deformable_group, height_col, width_col, out0_p,whole_size);
-    """    
-    return jt.code(grad_im_shape,data_col.dtype,[data_col, data_offset],cuda_header=HEADER,cuda_src=src)
+    """
+    return jt.code(grad_im_shape, data_col.dtype, [data_col, data_offset], cuda_header=HEADER, cuda_src=src)
 
-def deform_conv_forward_cuda(input,weight,offset,
+
+def deform_conv_forward_cuda(input, weight, offset,
                              kW, kH, dW, dH, padW, padH,
                              dilationW, dilationH, group,
                              deformable_group, im2col_step):
 
-    batchSize,nInputPlane,inputHeight,inputWidth = input.shape
+    batchSize, nInputPlane, inputHeight, inputWidth = input.shape
 
     nOutputPlane = weight.size(0)
 
-    outputWidth = (inputWidth + 2 * padW - (dilationW * (kW - 1) + 1)) // dW + 1
-    outputHeight = (inputHeight + 2 * padH - (dilationH * (kH - 1) + 1)) // dH + 1
+    outputWidth = (inputWidth + 2 * padW -
+                   (dilationW * (kW - 1) + 1)) // dW + 1
+    outputHeight = (inputHeight + 2 * padH -
+                    (dilationH * (kH - 1) + 1)) // dH + 1
 
     assert (offset.size(0) == batchSize), "invalid batch size of offset"
 
+    columns_shape = (nInputPlane * kW * kH, im2col_step *
+                     outputHeight * outputWidth)
 
-    columns_shape = (nInputPlane * kW * kH, im2col_step * outputHeight * outputWidth)
-
-    input = input.view((batchSize // im2col_step, im2col_step, nInputPlane,inputHeight, inputWidth))
-    offset = offset.view((batchSize // im2col_step, im2col_step,deformable_group * 2 * kH * kW, outputHeight, outputWidth))
+    input = input.view((batchSize // im2col_step, im2col_step,
+                       nInputPlane, inputHeight, inputWidth))
+    offset = offset.view((batchSize // im2col_step, im2col_step,
+                         deformable_group * 2 * kH * kW, outputHeight, outputWidth))
 
     output_buffer = jt.zeros((batchSize // im2col_step, nOutputPlane,
-                 im2col_step * outputHeight, outputWidth),
-                input.dtype)
+                              im2col_step * outputHeight, outputWidth),
+                             input.dtype)
 
-    output_buffer = output_buffer.view((output_buffer.size(0), group, output_buffer.size(1) // group,output_buffer.size(2), output_buffer.size(3)))
+    output_buffer = output_buffer.view((output_buffer.size(0), group, output_buffer.size(
+        1) // group, output_buffer.size(2), output_buffer.size(3)))
 
     for elt in range(batchSize // im2col_step):
         columns = deformable_im2col(input[elt], offset[elt], nInputPlane, inputHeight,
-                      inputWidth, kH, kW, padH, padW, dH, dW, dilationH,
-                      dilationW, im2col_step, deformable_group, columns_shape)
+                                    inputWidth, kH, kW, padH, padW, dH, dW, dilationH,
+                                    dilationW, im2col_step, deformable_group, columns_shape)
 
-        columns = columns.view((group, columns.size(0) // group, columns.size(1)))
-        weight = weight.view((group, weight.size(0) // group, weight.size(1),weight.size(2), weight.size(3)))
-        
+        columns = columns.view(
+            (group, columns.size(0) // group, columns.size(1)))
+        weight = weight.view((group, weight.size(
+            0) // group, weight.size(1), weight.size(2), weight.size(3)))
+
         for g in range(group):
-            output_buffer[elt,g] = (output_buffer[elt,g].flatten(1)+jt.matmul(weight[g].flatten(1), columns[g])).view_as(output_buffer[elt,g])
-        
-    output_buffer = output_buffer.view((output_buffer.size(0), output_buffer.size(1) * output_buffer.size(2),output_buffer.size(3), output_buffer.size(4)))
-    output_buffer = output_buffer.view((batchSize // im2col_step, nOutputPlane,im2col_step, outputHeight, outputWidth))
-    output_buffer = output_buffer.transpose(0,2, 1,3,4)
-    output = output_buffer.view((batchSize, nOutputPlane, outputHeight, outputWidth))
+            output_buffer[elt, g] = (output_buffer[elt, g].flatten(
+                1)+jt.matmul(weight[g].flatten(1), columns[g])).view_as(output_buffer[elt, g])
 
-    return output 
+    output_buffer = output_buffer.view((output_buffer.size(0), output_buffer.size(
+        1) * output_buffer.size(2), output_buffer.size(3), output_buffer.size(4)))
+    output_buffer = output_buffer.view(
+        (batchSize // im2col_step, nOutputPlane, im2col_step, outputHeight, outputWidth))
+    output_buffer = output_buffer.transpose(0, 2, 1, 3, 4)
+    output = output_buffer.view(
+        (batchSize, nOutputPlane, outputHeight, outputWidth))
+
+    return output
 
 
 def deform_conv_backward_input_cuda(input, offset,
                                     gradOutput,
-                                     weight,
-                                     kW, kH,dW,
-                                    dH, padW,padH,dilationW,
+                                    weight,
+                                    kW, kH, dW,
+                                    dH, padW, padH, dilationW,
                                     dilationH, group,
-                                    deformable_group,im2col_step):
+                                    deformable_group, im2col_step):
 
-    batchSize,nInputPlane,inputHeight,inputWidth = input.shape
+    batchSize, nInputPlane, inputHeight, inputWidth = input.shape
     nOutputPlane = weight.size(0)
-    outputWidth =(inputWidth + 2 * padW - (dilationW * (kW - 1) + 1)) // dW + 1
-    outputHeight = (inputHeight + 2 * padH - (dilationH * (kH - 1) + 1)) // dH + 1
+    outputWidth = (inputWidth + 2 * padW -
+                   (dilationW * (kW - 1) + 1)) // dW + 1
+    outputHeight = (inputHeight + 2 * padH -
+                    (dilationH * (kH - 1) + 1)) // dH + 1
 
     assert offset.size(0) == batchSize, "invalid batch size of offset"
 
     gradInput = jt.zeros_like(input)
     gradOffset = jt.zeros_like(offset)
-    columns = jt.zeros((nInputPlane * kW * kH, im2col_step * outputHeight * outputWidth),input.dtype)
+    columns = jt.zeros((nInputPlane * kW * kH, im2col_step *
+                       outputHeight * outputWidth), input.dtype)
 
-    gradOutput = gradOutput.view((batchSize // im2col_step, im2col_step,nOutputPlane, outputHeight, outputWidth))
-    gradOutput = gradOutput.transpose(0,2,1,3,4)
+    gradOutput = gradOutput.view(
+        (batchSize // im2col_step, im2col_step, nOutputPlane, outputHeight, outputWidth))
+    gradOutput = gradOutput.transpose(0, 2, 1, 3, 4)
 
-    gradInput = gradInput.view((batchSize // im2col_step, im2col_step, nInputPlane,inputHeight, inputWidth))
-    input = input.view((batchSize // im2col_step, im2col_step, nInputPlane,inputHeight, inputWidth))
-    gradOffset = gradOffset.view((batchSize // im2col_step, im2col_step,deformable_group * 2 * kH * kW, outputHeight,outputWidth))
-    offset = offset.view((batchSize // im2col_step, im2col_step,deformable_group * 2 * kH * kW, outputHeight, outputWidth))
-    
+    gradInput = gradInput.view(
+        (batchSize // im2col_step, im2col_step, nInputPlane, inputHeight, inputWidth))
+    input = input.view((batchSize // im2col_step, im2col_step,
+                       nInputPlane, inputHeight, inputWidth))
+    gradOffset = gradOffset.view((batchSize // im2col_step, im2col_step,
+                                 deformable_group * 2 * kH * kW, outputHeight, outputWidth))
+    offset = offset.view((batchSize // im2col_step, im2col_step,
+                         deformable_group * 2 * kH * kW, outputHeight, outputWidth))
+
     for elt in range(batchSize // im2col_step):
-        columns = columns.view((group, columns.size(0) // group, columns.size(1)))
-        weight = weight.view((group, weight.size(0) // group, weight.size(1),weight.size(2), weight.size(3)))
-        gradOutput = gradOutput.view((gradOutput.size(0), group, gradOutput.size(1) // group, gradOutput.size(2), gradOutput.size(3), gradOutput.size(4)))
-        
-        for g in range(group):
-            columns[g] = jt.matmul(weight[g].flatten(1).transpose(1, 0),gradOutput[elt,g].flatten(1))
-        
-        columns = columns.view((columns.size(0) * columns.size(1), columns.size(2)))
-        gradOutput = gradOutput.view((gradOutput.size(0), gradOutput.size(1) * gradOutput.size(2),gradOutput.size(3), gradOutput.size(4), gradOutput.size(5)))
-        
-        gradOffset[elt] = deformable_col2im_coord(columns, input[elt], offset[elt], nInputPlane,
-                                inputHeight, inputWidth, kH, kW, padH, padW, dH, dW,
-                                dilationH, dilationW, im2col_step, deformable_group,
-                                gradOffset[elt].shape)
+        columns = columns.view(
+            (group, columns.size(0) // group, columns.size(1)))
+        weight = weight.view((group, weight.size(
+            0) // group, weight.size(1), weight.size(2), weight.size(3)))
+        gradOutput = gradOutput.view((gradOutput.size(0), group, gradOutput.size(
+            1) // group, gradOutput.size(2), gradOutput.size(3), gradOutput.size(4)))
 
-        gradInput[elt] = deformable_col2im(columns, offset[elt], nInputPlane, inputHeight,inputWidth, kH, kW, padH, padW, dH, dW, dilationH,
-                         dilationW, im2col_step, deformable_group, gradInput[elt].shape)
+        for g in range(group):
+            columns[g] = jt.matmul(weight[g].flatten(
+                1).transpose(1, 0), gradOutput[elt, g].flatten(1))
+
+        columns = columns.view(
+            (columns.size(0) * columns.size(1), columns.size(2)))
+        gradOutput = gradOutput.view((gradOutput.size(0), gradOutput.size(
+            1) * gradOutput.size(2), gradOutput.size(3), gradOutput.size(4), gradOutput.size(5)))
+
+        gradOffset[elt] = deformable_col2im_coord(columns, input[elt], offset[elt], nInputPlane,
+                                                  inputHeight, inputWidth, kH, kW, padH, padW, dH, dW,
+                                                  dilationH, dilationW, im2col_step, deformable_group,
+                                                  gradOffset[elt].shape)
+
+        gradInput[elt] = deformable_col2im(columns, offset[elt], nInputPlane, inputHeight, inputWidth, kH, kW, padH, padW, dH, dW, dilationH,
+                                           dilationW, im2col_step, deformable_group, gradInput[elt].shape)
 
     gradInput = gradInput.view(batchSize, nInputPlane, inputHeight, inputWidth)
-    gradOffset = gradOffset.view((batchSize, deformable_group * 2 * kH * kW, outputHeight, outputWidth))
-    return gradInput,gradOffset
+    gradOffset = gradOffset.view(
+        (batchSize, deformable_group * 2 * kH * kW, outputHeight, outputWidth))
+    return gradInput, gradOffset
+
 
 def deform_conv_backward_parameters_cuda(
-     input,  offset,  gradOutput,gradWeight,
-      kW, kH, dW, dH,
-    padW, padH, dilationW, dilationH, group,
-    deformable_group, scale, im2col_step):
- 
-    batchSize,nInputPlane,inputHeight,inputWidth = input.shape
+    input,  offset,  gradOutput, gradWeight,
+        kW, kH, dW, dH,
+        padW, padH, dilationW, dilationH, group,
+        deformable_group, scale, im2col_step):
+
+    batchSize, nInputPlane, inputHeight, inputWidth = input.shape
     nOutputPlane = gradWeight.size(0)
-    outputWidth =(inputWidth + 2 * padW - (dilationW * (kW - 1) + 1)) // dW + 1
-    outputHeight = (inputHeight + 2 * padH - (dilationH * (kH - 1) + 1)) // dH + 1
+    outputWidth = (inputWidth + 2 * padW -
+                   (dilationW * (kW - 1) + 1)) // dW + 1
+    outputHeight = (inputHeight + 2 * padH -
+                    (dilationH * (kH - 1) + 1)) // dH + 1
 
     assert offset.size(0) == batchSize, "invalid batch size of offset"
 
-    columns_shape=(nInputPlane * kW * kH, im2col_step * outputHeight * outputWidth)
+    columns_shape = (nInputPlane * kW * kH, im2col_step *
+                     outputHeight * outputWidth)
 
-    gradOutput = gradOutput.view(batchSize // im2col_step, im2col_step,nOutputPlane, outputHeight, outputWidth)
-    gradOutput = gradOutput.transpose(0,2,1,3,4)
+    gradOutput = gradOutput.view(
+        batchSize // im2col_step, im2col_step, nOutputPlane, outputHeight, outputWidth)
+    gradOutput = gradOutput.transpose(0, 2, 1, 3, 4)
 
     # gradOutputBuffer = jt.zeros_like(gradOutput)
     # gradOutputBuffer = gradOutputBuffer.view(batchSize // im2col_step, nOutputPlane, im2col_step,outputHeight, outputWidth)
     gradOutputBuffer = gradOutput
-    gradOutputBuffer = gradOutputBuffer.view(batchSize // im2col_step, nOutputPlane,im2col_step * outputHeight, outputWidth)
-    
+    gradOutputBuffer = gradOutputBuffer.view(
+        batchSize // im2col_step, nOutputPlane, im2col_step * outputHeight, outputWidth)
+
     # gradOutput = gradOutput.transpose(0,2,1,3,4)
     # gradOutput = gradOutput.view(batchSize, nOutputPlane, outputHeight, outputWidth)
 
-    input = input.view(batchSize // im2col_step, im2col_step, nInputPlane,inputHeight, inputWidth)
-    offset = offset.view(batchSize // im2col_step, im2col_step, deformable_group * 2 * kH * kW, outputHeight, outputWidth)
-    
-    for elt in range( batchSize // im2col_step):
+    input = input.view(batchSize // im2col_step, im2col_step,
+                       nInputPlane, inputHeight, inputWidth)
+    offset = offset.view(batchSize // im2col_step, im2col_step,
+                         deformable_group * 2 * kH * kW, outputHeight, outputWidth)
+
+    for elt in range(batchSize // im2col_step):
         columns = deformable_im2col(input[elt], offset[elt], nInputPlane, inputHeight,
-                      inputWidth, kH, kW, padH, padW, dH, dW, dilationH,
-                      dilationW, im2col_step, deformable_group, columns_shape)
+                                    inputWidth, kH, kW, padH, padW, dH, dW, dilationH,
+                                    dilationW, im2col_step, deformable_group, columns_shape)
 
         gradOutputBuffer = gradOutputBuffer.view(gradOutputBuffer.size(0), group, gradOutputBuffer.size(1) // group,
-            gradOutputBuffer.size(2), gradOutputBuffer.size(3))
-        columns = columns.view(group, columns.size(0) // group, columns.size(1))
-        gradWeight = gradWeight.view(group, gradWeight.size(0) // group, gradWeight.size(1),gradWeight.size(2), gradWeight.size(3))
-        
+                                                 gradOutputBuffer.size(2), gradOutputBuffer.size(3))
+        columns = columns.view(group, columns.size(0) //
+                               group, columns.size(1))
+        gradWeight = gradWeight.view(group, gradWeight.size(
+            0) // group, gradWeight.size(1), gradWeight.size(2), gradWeight.size(3))
+
         for g in range(group):
-            gradWeight[g] = (gradWeight[g].flatten(1)+scale*jt.matmul(gradOutputBuffer[elt,g].flatten(1),columns[g].transpose(1, 0))).view_as(gradWeight[g])
+            gradWeight[g] = (gradWeight[g].flatten(1)+scale*jt.matmul(gradOutputBuffer[elt,
+                             g].flatten(1), columns[g].transpose(1, 0))).view_as(gradWeight[g])
 
         gradOutputBuffer = gradOutputBuffer.view(gradOutputBuffer.size(0),
-            gradOutputBuffer.size(1) * gradOutputBuffer.size(2),
-            gradOutputBuffer.size(3), gradOutputBuffer.size(4))
-        columns = columns.view(columns.size(0) * columns.size(1), columns.size(2))
+                                                 gradOutputBuffer.size(
+                                                     1) * gradOutputBuffer.size(2),
+                                                 gradOutputBuffer.size(3), gradOutputBuffer.size(4))
+        columns = columns.view(columns.size(
+            0) * columns.size(1), columns.size(2))
         gradWeight = gradWeight.view(gradWeight.size(0) * gradWeight.size(1),
-                                      gradWeight.size(2), gradWeight.size(3),
-                                      gradWeight.size(4))
+                                     gradWeight.size(2), gradWeight.size(3),
+                                     gradWeight.size(4))
     return gradWeight
 
 
@@ -582,8 +625,7 @@ class DeformConvFunction(jt.Function):
         self.saved_tensors = (input, offset, weight)
 
         output_shape = DeformConvFunction._output_size(input, weight, self.padding,
-                                            self.dilation, self.stride)
-
+                                                       self.dilation, self.stride)
 
         if not jt.flags.use_cuda:
             raise NotImplementedError
@@ -592,13 +634,13 @@ class DeformConvFunction(jt.Function):
             assert (input.shape[0] %
                     cur_im2col_step) == 0, 'im2col step must divide batchsize'
             output = deform_conv_forward_cuda(
-                input, weight, offset, weight.size(3), weight.size(2), self.stride[1], self.stride[0],
+                input, weight, offset, weight.size(3), weight.size(
+                    2), self.stride[1], self.stride[0],
                 self.padding[1], self.padding[0], self.dilation[1],
                 self.dilation[0], self.groups, self.deformable_groups,
                 cur_im2col_step)
-            assert output.shape==output_shape
+            assert output.shape == output_shape
         return output
-
 
     def grad(self, grad_output):
         input, offset, weight = self.saved_tensors
@@ -609,15 +651,16 @@ class DeformConvFunction(jt.Function):
             raise NotImplementedError
         else:
             cur_im2col_step = min(self.im2col_step, input.shape[0])
-            assert (input.shape[0] % cur_im2col_step) == 0, 'im2col step must divide batchsize'
+            assert (
+                input.shape[0] % cur_im2col_step) == 0, 'im2col step must divide batchsize'
 
-            grad_input,grad_offset = deform_conv_backward_input_cuda(
-                input, offset, grad_output, weight,weight.size(3),
+            grad_input, grad_offset = deform_conv_backward_input_cuda(
+                input, offset, grad_output, weight, weight.size(3),
                 weight.size(2), self.stride[1], self.stride[0],
                 self.padding[1], self.padding[0], self.dilation[1],
                 self.dilation[0], self.groups, self.deformable_groups,
                 cur_im2col_step)
-            
+
             # print(grad_output.sum(),grad_input.sum(),grad_offset.sum())
 
             grad_weight = jt.zeros_like(weight)
@@ -647,7 +690,9 @@ class DeformConvFunction(jt.Function):
                     'x'.join(map(str, output_size))))
         return output_size
 
+
 deform_conv = DeformConvFunction.apply
+
 
 class DeformConv(nn.Module):
 
@@ -680,7 +725,8 @@ class DeformConv(nn.Module):
         self.groups = groups
         self.deformable_groups = deformable_groups
 
-        self.weight = jt.zeros((out_channels, in_channels // self.groups,*self.kernel_size))
+        self.weight = jt.zeros(
+            (out_channels, in_channels // self.groups, *self.kernel_size))
 
         self.reset_parameters()
 
@@ -689,7 +735,7 @@ class DeformConv(nn.Module):
         for k in self.kernel_size:
             n *= k
         stdv = 1. / math.sqrt(n)
-        nn.init.uniform_(self.weight,-stdv, stdv)
+        nn.init.uniform_(self.weight, -stdv, stdv)
 
     def execute(self, x, offset):
         return deform_conv(x, offset, self.weight, self.stride, self.padding,
@@ -714,26 +760,27 @@ class DeformConv(nn.Module):
 
 def test_dcn():
     import numpy as np
-    dcn = DeformConv(256, 256, (3, 3), (1, 1), padding=(1, 1), dilation=(1, 1), groups=1, deformable_groups=1)
-    dcn.load_state_dict(jt.load("/home/lxl/workspace/s2anet/dcn_init.pth"))
-    # x,offset = jt.load("/home/lxl/workspace/JDet/test_dcn1.pkl")
-    x,offset,out = jt.load("/home/lxl/workspace/JDet/test_dcn_final.pkl")
+    dcn = DeformConv(256, 256, (3, 3), (1, 1), padding=(
+        1, 1), dilation=(1, 1), groups=1, deformable_groups=1)
+    dcn.load_state_dict(jt.load("workspace/s2anet/dcn_init.pth"))
+    # x,offset = jt.load("workspace/JDet/test_dcn1.pkl")
+    x, offset, out = jt.load("workspace/JDet/test_dcn_final.pkl")
     x = jt.array(x)
     offset = jt.array(offset)
 
-    output = dcn(x,offset )
+    output = dcn(x, offset)
     # print(out.sum())
     # print(np.abs(output.numpy()-out).max())
 
     loss = output.sum()
     # print(loss)
     print(output.sum())
-    grads = jt.grad(loss,[x,offset,dcn.weight])
+    grads = jt.grad(loss, [x, offset, dcn.weight])
     print(grads[0].sum())
     print(grads[1].sum())
     print(grads[2].sum())
 
 
 if __name__ == "__main__":
-    jt.flags.use_cuda=1
+    jt.flags.use_cuda = 1
     test_dcn()

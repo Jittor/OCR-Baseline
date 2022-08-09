@@ -4,21 +4,21 @@ model = dict(
     backbone=dict(
         type='Resnet101',
         frozen_stages=1,
-        return_stages=["layer1","layer2","layer3","layer4"],
-        pretrained= True),
+        return_stages=["layer1", "layer2", "layer3", "layer4"],
+        pretrained=True),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
         out_channels=256,
         num_outs=5),
-    rpn = dict(
-        type = "GlidingRPNHead",
-        in_channels = 256,
+    rpn=dict(
+        type="GlidingRPNHead",
+        in_channels=256,
         num_classes=2,
-        min_bbox_size = 0,
-        nms_thresh = 0.7,
-        nms_pre = 2000,
-        nms_post = 2000,
+        min_bbox_size=0,
+        nms_thresh=0.7,
+        nms_pre=2000,
+        nms_post=2000,
         feat_channels=256,
         anchor_generator=dict(
             type='AnchorGenerator',
@@ -39,7 +39,7 @@ model = dict(
             ignore_iof_thr=-1,
             match_low_quality=True,
             assigned_labels_filled=-1,
-            ),
+        ),
         sampler=dict(
             type='RandomSampler',
             num=256,
@@ -51,14 +51,14 @@ model = dict(
         type='GlidingHead',
         num_classes=15,
         in_channels=256,
-        representation_dim = 1024,
-        pooler_resolution =  7, 
-        pooler_scales = [1/4.,1/8., 1/16., 1/32., 1/64.],
-        pooler_sampling_ratio = 0,
+        representation_dim=1024,
+        pooler_resolution=7,
+        pooler_scales=[1/4., 1/8., 1/16., 1/32., 1/64.],
+        pooler_sampling_ratio=0,
         score_thresh=0.05,
         nms_thresh=0.3,
         detections_per_img=2000,
-        box_weights = (10., 10., 5., 5.),
+        box_weights=(10., 10., 5., 5.),
         assigner=dict(
             type='MaxIoUAssigner',
             pos_iou_thr=0.5,
@@ -82,27 +82,28 @@ model = dict(
         ratio_coder=dict(type='GVRatioCoder'),
         bbox_roi_extractor=dict(
             type='SingleRoIExtractor',
-            roi_layer=dict(type='ROIAlign', output_size=7, sampling_ratio=2, version=1),
+            roi_layer=dict(type='ROIAlign', output_size=7,
+                           sampling_ratio=2, version=1),
             out_channels=256,
             featmap_strides=[4, 8, 16, 32]),
         cls_loss=dict(
             type='CrossEntropyLoss',
-            ),
+        ),
         bbox_loss=dict(
-            type='SmoothL1Loss', 
-            beta=1.0, 
+            type='SmoothL1Loss',
+            beta=1.0,
             loss_weight=1.0
-            ),
+        ),
         fix_loss=dict(
-            type='SmoothL1Loss', 
-            beta=1.0 / 3.0, 
+            type='SmoothL1Loss',
+            beta=1.0 / 3.0,
             loss_weight=1.0,
-            ),
+        ),
         ratio_loss=dict(
-            type='SmoothL1Loss', 
-            beta=1.0 / 3.0, 
+            type='SmoothL1Loss',
+            beta=1.0 / 3.0,
             loss_weight=16.0
-            ),
+        ),
         with_bbox=True,
         with_shared_head=False,
         start_bbox_type='hbb',
@@ -112,13 +113,13 @@ model = dict(
         reg_class_agnostic=False,
         ratio_thr=0.8,
         max_per_img=2000,
-        )
     )
+)
 dataset = dict(
     train=dict(
         type="DOTADataset",
-        annotations_file='/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/trainval1024.pkl',
-        images_dir='/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/images/',
+        annotations_file='dataset/DOTA_1024/trainval_split/trainval1024.pkl',
+        images_dir='dataset/DOTA_1024/trainval_split/images/',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -126,21 +127,21 @@ dataset = dict(
                 max_size=1024
             ),
             dict(
-                type='RotatedRandomFlip', 
+                type='RotatedRandomFlip',
                 prob=0.5),
             dict(
                 type="RandomRotateAug",
                 random_rotate_on=True,
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=True,)
-            
+
         ],
         batch_size=2,
         num_workers=4,
@@ -150,8 +151,8 @@ dataset = dict(
     ),
     val=dict(
         type="DOTADataset",
-        annotations_file='/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/trainval1024.pkl',
-        images_dir='/mnt/disk/lxl/dataset/DOTA_1024/trainval_split/images/',
+        annotations_file='dataset/DOTA_1024/trainval_split/trainval1024.pkl',
+        images_dir='dataset/DOTA_1024/trainval_split/images/',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -159,12 +160,12 @@ dataset = dict(
                 max_size=1024
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False),
         ],
         batch_size=2,
@@ -173,20 +174,20 @@ dataset = dict(
     ),
     test=dict(
         type="ImageDataset",
-        images_dir='/mnt/disk/lxl/dataset/DOTA_1024/test_split/images/',\
+        images_dir='dataset/DOTA_1024/test_split/images/',
         transforms=[
             dict(
                 type="RotatedResize",
                 min_size=1024,
                 max_size=1024
             ),
-            dict(   
-                type = "Pad",
+            dict(
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=True,),
         ],
         num_workers=4,
@@ -194,7 +195,8 @@ dataset = dict(
     )
 )
 
-optimizer = dict(type='SGD',  lr=0.005, momentum=0.9, weight_decay=0.0001, grad_clip=dict(max_norm=35, norm_type=2))
+optimizer = dict(type='SGD',  lr=0.005, momentum=0.9,
+                 weight_decay=0.0001, grad_clip=dict(max_norm=35, norm_type=2))
 
 scheduler = dict(
     type='StepLR',

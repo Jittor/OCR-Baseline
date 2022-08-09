@@ -20,10 +20,10 @@ cd $JDet_PATH$
 We can set how the FAIR is preprocessed by editing the `configs/preprocess/fair_preprocess_config.py`:
 ```python
 type='FAIR'
-source_fair_dataset_path='/home/cxjyxx_me/workspace/JAD/datasets/FAIR/fair'
+source_fair_dataset_path='workspace/JAD/datasets/FAIR/fair'
 convert_tasks=['train','val','test']
-source_dataset_path='/home/cxjyxx_me/workspace/JAD/datasets/FAIR/fair_DOTA'
-target_dataset_path='/home/cxjyxx_me/workspace/JAD/datasets/FAIR/processed'
+source_dataset_path='workspace/JAD/datasets/FAIR/fair_DOTA'
+target_dataset_path='workspace/JAD/datasets/FAIR/processed'
 
 # available labels: train, val, test, trainval
 tasks=[

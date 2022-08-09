@@ -153,7 +153,7 @@ if __name__ == "__main__":
                         metavar="PREDICTION PATH")
     parser.add_argument("-g",
                         "--gt_dir",
-                        default="/home/gmh/dataset/dataset/test_dataset/labels",
+                        default="/home/data/1306",
                         type=str,
                         help="path of label files.",
                         metavar="LABEL PATH")

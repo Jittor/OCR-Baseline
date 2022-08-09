@@ -4,8 +4,8 @@ model = dict(
     backbone=dict(
         type='Resnet50',
         frozen_stages=1,
-        return_stages=["layer1","layer2","layer3","layer4"],
-        pretrained= True),
+        return_stages=["layer1", "layer2", "layer3", "layer4"],
+        pretrained=True),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
@@ -78,10 +78,10 @@ model = dict(
                 allowed_border=-1,
                 pos_weight=-1,
                 debug=False))
-        )
     )
+)
 
-data_root = "/mnt/disk/flowey/dataset/processed_DOTA"
+data_root = "dataset/processed_DOTA"
 train_root = f"{data_root}/trainval_1024_200_0.5-1.0-1.5"
 dataset = dict(
     train=dict(
@@ -99,14 +99,14 @@ dataset = dict(
                 random_rotate_on=True,
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False,)
-            
+
         ],
         batch_size=2,
         num_workers=4,
@@ -124,12 +124,12 @@ dataset = dict(
                 max_size=1024
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False),
         ],
         batch_size=2,
@@ -138,7 +138,7 @@ dataset = dict(
     ),
     test=dict(
         type="ImageDataset",
-        
+
         images_dir=f'{data_root}/test_1024_200_0.5-1.0-1.5/images/',
         transforms=[
             dict(
@@ -147,12 +147,12 @@ dataset = dict(
                 max_size=1024
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=False,),
         ],
         num_workers=4,
@@ -161,12 +161,12 @@ dataset = dict(
 )
 
 optimizer = dict(
-    type='SGD', 
-    lr=0.01/4., #0.0,#0.01*(1/8.), 
-    momentum=0.9, 
+    type='SGD',
+    lr=0.01/4.,  # 0.0,#0.01*(1/8.),
+    momentum=0.9,
     weight_decay=0.0001,
     grad_clip=dict(
-        max_norm=35, 
+        max_norm=35,
         norm_type=2))
 
 scheduler = dict(

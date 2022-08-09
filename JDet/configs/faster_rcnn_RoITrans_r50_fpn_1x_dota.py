@@ -4,7 +4,7 @@ model = dict(
     backbone=dict(
         type='Resnet50',
         frozen_stages=1,
-        return_stages=["layer1","layer2","layer3","layer4"],
+        return_stages=["layer1", "layer2", "layer3", "layer4"],
         pretrained=True),
     neck=dict(
         type='FPN',
@@ -27,7 +27,8 @@ model = dict(
         loss_bbox=dict(type='SmoothL1Loss', beta=1.0 / 9.0, loss_weight=1.0)),
     bbox_roi_extractor=dict(
         type='SingleRoIExtractor',
-        roi_layer=dict(type='ROIAlign', output_size=7, sampling_ratio=2, version=1),
+        roi_layer=dict(type='ROIAlign', output_size=7,
+                       sampling_ratio=2, version=1),
         out_channels=256,
         featmap_strides=[4, 8, 16, 32]),
     bbox_head=dict(
@@ -46,10 +47,11 @@ model = dict(
         loss_bbox=dict(type='SmoothL1Loss', beta=1.0, loss_weight=1.0)),
     rbbox_roi_extractor=dict(
         type='RboxSingleRoIExtractor',
-        roi_layer=dict(type='ROIAlignRotated', output_size=7, sampling_ratio=2),
+        roi_layer=dict(type='ROIAlignRotated',
+                       output_size=7, sampling_ratio=2),
         out_channels=256,
         featmap_strides=[4, 8, 16, 32]),
-    rbbox_head = dict(
+    rbbox_head=dict(
         type='SharedFCBBoxHeadRbbox',
         num_fcs=2,
         in_channels=256,
@@ -62,7 +64,7 @@ model = dict(
         loss_cls=dict(
             type='CrossEntropyLossForRcnn', use_sigmoid=False, loss_weight=1.0),
         loss_bbox=dict(type='SmoothL1Loss', beta=1.0, loss_weight=1.0)),
-    train_cfg = dict(
+    train_cfg=dict(
         rpn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
@@ -121,7 +123,7 @@ model = dict(
                 pos_weight=-1,
                 debug=False)
         ]),
-    test_cfg = dict(
+    test_cfg=dict(
         rpn=dict(
             nms_across_levels=False,
             nms_pre=2000,
@@ -130,9 +132,9 @@ model = dict(
             nms_thr=0.7,
             min_bbox_size=0),
         rcnn=dict(
-            score_thr = 0.05, nms = dict(type='py_cpu_nms_poly_fast', iou_thr=0.1), max_per_img = 2000)
+            score_thr=0.05, nms=dict(type='py_cpu_nms_poly_fast', iou_thr=0.1), max_per_img=2000)
 
-    # soft-nms is also supported for rcnn testing
+        # soft-nms is also supported for rcnn testing
         # e.g., nms=dict(type='soft_nms', iou_thr=0.5, min_score=0.05)
     )
 )
@@ -144,66 +146,66 @@ dataset = dict(
     workers_per_gpu=2,
     train=dict(
         type=dataset_type,
-        dataset_dir='/home/cxjyxx_me/workspace/JAD/datasets/processed_DOTA/trainval_1024_200_1.0',
+        dataset_dir='workspace/JAD/datasets/processed_DOTA/trainval_1024_200_1.0',
         version='1',
         filter_min_size=32,
         transforms=[
             dict(
-                type = "RotatedRandomFlip",
-                prob = 0.5,
+                type="RotatedRandomFlip",
+                prob=0.5,
                 direction="horizontal",
             ),
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=True),
         ],
         batch_size=2,
         shuffle=True,
-        ),
+    ),
     val=dict(
         type=dataset_type,
-        dataset_dir='/home/cxjyxx_me/workspace/JAD/datasets/processed_DOTA/trainval_1024_200_1.0',
+        dataset_dir='workspace/JAD/datasets/processed_DOTA/trainval_1024_200_1.0',
         version='1',
         filter_min_size=32,
         transforms=[
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=True),
         ],
-        ),
+    ),
     test=dict(
-        type="ImageDataset",        
-        images_dir='/home/cxjyxx_me/workspace/JAD/datasets/processed_DOTA/test_1024_200_1.0/images',
+        type="ImageDataset",
+        images_dir='workspace/JAD/datasets/processed_DOTA/test_1024_200_1.0/images',
         transforms=[
             dict(
-                type = "Pad",
+                type="Pad",
                 size_divisor=32),
             dict(
-                type = "Normalize",
-                mean =  [123.675, 116.28, 103.53],
-                std = [58.395, 57.12, 57.375],
+                type="Normalize",
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
                 to_bgr=True),
         ],
     )
 )
 # optimizer
 optimizer = dict(
-    type='SGD', 
-    lr=0.0025, 
-    momentum=0.9, 
+    type='SGD',
+    lr=0.0025,
+    momentum=0.9,
     weight_decay=0.0001,
     grad_clip=dict(
-        max_norm=35, 
+        max_norm=35,
         norm_type=2))
 
 # learning policy

@@ -133,7 +133,7 @@ model:
 # base2.yaml
 dataset:
     type: COCODataset
-    root: /mnt/disk/lxl/dataset/coco/images/train2017
+    root: dataset/coco/images/train2017
     num_workers: 4
     shuffle: True
 
@@ -151,7 +151,7 @@ model:
     pretrained: True
 dataset:
     type: COCODataset
-    root: /mnt/disk/lxl/dataset/coco/images/train2017
+    root: dataset/coco/images/train2017
     num_workers: 4
     shuffle: True
 
@@ -172,7 +172,7 @@ model:
     pretrained: True
 dataset:
     type: COCODataset
-    root: /mnt/disk/lxl/dataset/coco/images/train2017
+    root: dataset/coco/images/train2017
     num_workers: 8
     shuffle: True
 ```
@@ -187,7 +187,7 @@ model:
     pretrained: True
 dataset:
     type: COCODataset
-    root: /mnt/disk/lxl/dataset/coco/images/train2017
+    root: dataset/coco/images/train2017
     num_workers: 4
     shuffle: True
 
@@ -215,7 +215,7 @@ model:
     pretrained: True
 dataset:
     type: COCODataset
-    root: /mnt/disk/lxl/dataset/coco/images/train2017
+    root: dataset/coco/images/train2017
     num_workers: 4
     shuffle: True
 

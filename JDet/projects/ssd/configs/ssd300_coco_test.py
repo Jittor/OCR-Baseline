@@ -55,8 +55,8 @@ model = dict(
 dataset = dict(
     train=dict(
         type="COCODataset",
-        anno_file='/mnt/disk/lxl/dataset/coco/annotations/instances_train2017.json',
-        root='/mnt/disk/lxl/dataset/coco/images/train2017/',
+        anno_file='dataset/coco/annotations/instances_train2017.json',
+        root='dataset/coco/images/train2017/',
         transforms=[
             dict(
                 type="Resize_keep_ratio",
@@ -77,8 +77,8 @@ dataset = dict(
     ),
     val=dict(
         type="COCODataset",
-        anno_file='/mnt/disk/lxl/dataset/coco/annotations/instances_val2017.json',
-        root='/mnt/disk/lxl/dataset/coco/images/val2017/',
+        anno_file='dataset/coco/annotations/instances_val2017.json',
+        root='dataset/coco/images/val2017/',
         transforms=[
             dict(
                 type="Resize_keep_ratio",
@@ -97,8 +97,8 @@ dataset = dict(
     ),
     test=dict(
         type="COCODataset",
-        anno_file='/mnt/disk/lxl/dataset/coco/annotations/instances_val2017.json',
-        root='/mnt/disk/lxl/dataset/coco/images/val2017/',
+        anno_file='dataset/coco/annotations/instances_val2017.json',
+        root='dataset/coco/images/val2017/',
         transforms=[
             dict(
                 type="Resize_keep_ratio",
@@ -128,7 +128,7 @@ scheduler = dict(
     warmup='linear',
     warmup_iters=1000,
     warmup_ratio=0.001,
-    milestones=[45,55])
+    milestones=[45, 55])
 
 logger = dict(
     type="RunLogger")

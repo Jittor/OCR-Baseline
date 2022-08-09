@@ -1,9 +1,9 @@
-type='DOTA'
-source_dataset_path='/home/cxjyxx_me/workspace/JAD/datasets/DOTA'
-target_dataset_path='/mnt/disk/flowey/datasets/processed_DOTA/'
+type = 'DOTA'
+source_dataset_path = 'workspace/JAD/datasets/DOTA'
+target_dataset_path = 'datasets/processed_DOTA/'
 
 # available labels: train, val, test, trainval
-tasks=[
+tasks = [
     dict(
         label='trainval',
         config=dict(
@@ -12,7 +12,7 @@ tasks=[
             multi_scale=[1.],
             horizontal_flip=False,
             vertical_flip=False,
-            rotation_angles=[0.] 
+            rotation_angles=[0.]
         )
     ),
     dict(
@@ -23,7 +23,7 @@ tasks=[
             multi_scale=[1.],
             horizontal_flip=False,
             vertical_flip=False,
-            rotation_angles=[0.] 
+            rotation_angles=[0.]
         )
     )
 ]

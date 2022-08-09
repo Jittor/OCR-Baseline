@@ -17,6 +17,7 @@ from functools import partial
 import time
 from jdet.config import get_cfg
 
+
 def choose_best_pointorder_fit_another(poly1, poly2):
     """
         To make the two polygons best fit with each point
@@ -32,12 +33,14 @@ def choose_best_pointorder_fit_another(poly1, poly2):
     combinate = [np.array([x1, y1, x2, y2, x3, y3, x4, y4]), np.array([x2, y2, x3, y3, x4, y4, x1, y1]),
                  np.array([x3, y3, x4, y4, x1, y1, x2, y2]), np.array([x4, y4, x1, y1, x2, y2, x3, y3])]
     dst_coordinate = np.array(poly2)
-    distances = np.array([np.sum((coord - dst_coordinate)**2) for coord in combinate])
+    distances = np.array([np.sum((coord - dst_coordinate)**2)
+                         for coord in combinate])
     sorted = distances.argsort()
     return combinate[sorted[0]]
 
+
 def cal_line_length(point1, point2):
-    return math.sqrt( math.pow(point1[0] - point2[0], 2) + math.pow(point1[1] - point2[1], 2))
+    return math.sqrt(math.pow(point1[0] - point2[0], 2) + math.pow(point1[1] - point2[1], 2))
 
 
 def split_single_warp(name, split_base, rate, extent):
@@ -45,6 +48,7 @@ def split_single_warp(name, split_base, rate, extent):
     counter.increment()
     print(counter.value, "/", total.value)
     split_base.SplitSingle(name, rate, extent)
+
 
 class Counter(object):
     def __init__(self, initval=0):
@@ -62,19 +66,22 @@ class Counter(object):
     @property
     def value(self):
         return self.val.value
+
+
 counter = Counter()
 total = Counter()
+
 
 class splitbase():
     def __init__(self,
                  basepath,
                  outpath,
-                 code = 'utf-8',
+                 code='utf-8',
                  gap=512,
                  subsize=1024,
                  thresh=0.7,
                  choosebestpoint=True,
-                 ext = '.png',
+                 ext='.png',
                  padding=True,
                  num_process=8
                  ):
@@ -118,10 +125,11 @@ class splitbase():
             if not os.path.isdir(self.outlabelpath):
                 os.mkdir(self.outlabelpath)
         # pdb.set_trace()
-    ## point: (x, y), rec: (xmin, ymin, xmax, ymax)
+    # point: (x, y), rec: (xmin, ymin, xmax, ymax)
     # def __del__(self):
     #     self.f_sub.close()
-    ## grid --> (x, y) position of grids
+    # grid --> (x, y) position of grids
+
     def polyorig2sub(self, left, up, poly):
         polyInsub = np.zeros(len(poly))
         for i in range(int(len(poly)/2)):
@@ -140,7 +148,8 @@ class splitbase():
         return inter_poly, half_iou
 
     def saveimagepatches(self, img, subimgname, left, up):
-        subimg = copy.deepcopy(img[up: (up + self.subsize), left: (left + self.subsize)])
+        subimg = copy.deepcopy(
+            img[up: (up + self.subsize), left: (left + self.subsize)])
         outdir = os.path.join(self.outimagepath, subimgname + self.ext)
         h, w, c = np.shape(subimg)
         if (self.padding):
@@ -151,18 +160,22 @@ class splitbase():
             cv2.imwrite(outdir, subimg)
 
     def GetPoly4FromPoly5(self, poly):
-        distances = [cal_line_length((poly[i * 2], poly[i * 2 + 1] ), (poly[(i + 1) * 2], poly[(i + 1) * 2 + 1])) for i in range(int(len(poly)/2 - 1))]
-        distances.append(cal_line_length((poly[0], poly[1]), (poly[8], poly[9])))
+        distances = [cal_line_length((poly[i * 2], poly[i * 2 + 1]), (poly[(
+            i + 1) * 2], poly[(i + 1) * 2 + 1])) for i in range(int(len(poly)/2 - 1))]
+        distances.append(cal_line_length(
+            (poly[0], poly[1]), (poly[8], poly[9])))
         pos = np.array(distances).argsort()[0]
         count = 0
         outpoly = []
         while count < 5:
             #print('count:', count)
             if (count == pos):
-                outpoly.append((poly[count * 2] + poly[(count * 2 + 2)%10])/2)
-                outpoly.append((poly[(count * 2 + 1)%10] + poly[(count * 2 + 3)%10])/2)
+                outpoly.append(
+                    (poly[count * 2] + poly[(count * 2 + 2) % 10])/2)
+                outpoly.append(
+                    (poly[(count * 2 + 1) % 10] + poly[(count * 2 + 3) % 10])/2)
                 count = count + 1
-            elif (count == (pos + 1)%5):
+            elif (count == (pos + 1) % 5):
                 count = count + 1
                 continue
 
@@ -181,9 +194,9 @@ class splitbase():
         with codecs.open(outdir, 'w', self.code) as f_out:
             for obj in objects:
                 gtpoly = shgeo.Polygon([(obj['poly'][0], obj['poly'][1]),
-                                         (obj['poly'][2], obj['poly'][3]),
-                                         (obj['poly'][4], obj['poly'][5]),
-                                         (obj['poly'][6], obj['poly'][7])])
+                                        (obj['poly'][2], obj['poly'][3]),
+                                        (obj['poly'][4], obj['poly'][5]),
+                                        (obj['poly'][6], obj['poly'][7])])
                 if (gtpoly.area <= 0):
                     continue
                 inter_poly, half_iou = self.calchalf_iou(gtpoly, imgpoly)
@@ -198,11 +211,12 @@ class splitbase():
                 if (half_iou == 1):
                     polyInsub = self.polyorig2sub(left, up, obj['poly'])
                     outline = ' '.join(list(map(str, polyInsub)))
-                    outline = outline + ' ' + obj['name'] + ' ' + str(obj['difficult'])
+                    outline = outline + ' ' + \
+                        obj['name'] + ' ' + str(obj['difficult'])
                     f_out.write(outline + '\n')
                 elif (half_iou > 0):
-                #elif (half_iou > self.thresh):
-                  ##  print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                    # elif (half_iou > self.thresh):
+                  # print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
                     inter_poly = shgeo.polygon.orient(inter_poly, sign=1)
                     out_poly = list(inter_poly.exterior.coords)[0: -1]
                     if len(out_poly) < 4:
@@ -214,7 +228,7 @@ class splitbase():
                         out_poly2.append(out_poly[i][1])
 
                     if (len(out_poly) == 5):
-                        #print('==========================')
+                        # print('==========================')
                         out_poly2 = self.GetPoly4FromPoly5(out_poly2)
                     elif (len(out_poly) > 5):
                         """
@@ -222,7 +236,8 @@ class splitbase():
                         """
                         continue
                     if (self.choosebestpoint):
-                        out_poly2 = choose_best_pointorder_fit_another(out_poly2, obj['poly'])
+                        out_poly2 = choose_best_pointorder_fit_another(
+                            out_poly2, obj['poly'])
 
                     polyInsub = self.polyorig2sub(left, up, out_poly2)
 
@@ -233,12 +248,13 @@ class splitbase():
                             polyInsub[index] = self.subsize
                     outline = ' '.join(list(map(str, polyInsub)))
                     if (half_iou > self.thresh):
-                        outline = outline + ' ' + obj['name'] + ' ' + str(obj['difficult'])
+                        outline = outline + ' ' + \
+                            obj['name'] + ' ' + str(obj['difficult'])
                     else:
-                        ## if the left part is too small, label as '2'
+                        # if the left part is too small, label as '2'
                         outline = outline + ' ' + obj['name'] + ' ' + '2'
                     f_out.write(outline + '\n')
-                #else:
+                # else:
                  #   mask_poly.append(inter_poly)
         self.saveimagepatches(resizeimg, subimgname, left, up)
 
@@ -257,11 +273,12 @@ class splitbase():
             fullname = os.path.join(self.labelpath, name + '.txt')
             objects = util.parse_dota_poly2(fullname)
             for obj in objects:
-                obj['poly'] = list(map(lambda x:rate*x, obj['poly']))
+                obj['poly'] = list(map(lambda x: rate*x, obj['poly']))
                 #obj['poly'] = list(map(lambda x: ([2 * y for y in x]), obj['poly']))
 
         if (rate != 1):
-            resizeimg = cv2.resize(img, None, fx=rate, fy=rate, interpolation = cv2.INTER_CUBIC)
+            resizeimg = cv2.resize(
+                img, None, fx=rate, fy=rate, interpolation=cv2.INTER_CUBIC)
         else:
             resizeimg = img
         outbasename = name + '__' + str(rate) + '__'
@@ -280,7 +297,8 @@ class splitbase():
                 down = min(up + self.subsize, height - 1)
                 subimgname = outbasename + str(left) + '___' + str(up)
                 if (self.process_label):
-                    self.savepatches(resizeimg, objects, subimgname, left, up, right, down)
+                    self.savepatches(resizeimg, objects,
+                                     subimgname, left, up, right, down)
                 else:
                     self.saveimagepatches(resizeimg, subimgname, left, up)
                 if (up + self.subsize >= height):
@@ -297,7 +315,8 @@ class splitbase():
         :param rate: resize rate before cut
         """
         imagelist = GetFileFromThisRootDir(self.imagepath)
-        imagenames = [util.custombasename(x) for x in imagelist if (util.custombasename(x) != 'Thumbs')]
+        imagenames = [util.custombasename(x) for x in imagelist if (
+            util.custombasename(x) != 'Thumbs')]
         if self.num_process == 1:
             for name in imagenames:
                 self.SplitSingle(name, rate, self.ext)
@@ -306,7 +325,8 @@ class splitbase():
             total.set(len(imagenames))
             counter.set(0)
             # worker = partial(self.SplitSingle, rate=rate, extent=self.ext)
-            worker = partial(split_single_warp, split_base=self, rate=rate, extent=self.ext)
+            worker = partial(split_single_warp, split_base=self,
+                             rate=rate, extent=self.ext)
             self.pool.map(worker, imagenames)
 
     def __getstate__(self):
@@ -317,8 +337,11 @@ class splitbase():
     def __setstate__(self, state):
         self.__dict__.update(state)
 
+
 def process(src_path, target_path, gap=200, subsize=1024, rates=[1.]):
-    target_path = target_path + '_' + str(subsize) + '_' + str(gap) + '_' + '-'.join([str(rate) for  rate in rates])
+    target_path = target_path + '_' + \
+        str(subsize) + '_' + str(gap) + '_' + \
+        '-'.join([str(rate) for rate in rates])
     if (not os.path.exists(target_path)):
         os.makedirs(target_path)
 
@@ -333,6 +356,6 @@ def process(src_path, target_path, gap=200, subsize=1024, rates=[1.]):
     return target_path
 
 
-# main('/mnt/disk/cxjyxx_me/JAD/datasets/DOTA/trainval', '/mnt/disk/cxjyxx_me/JAD/datasets/DOTA/splits/trainval', gap=150, subsize=600)
-# main('/mnt/disk/cxjyxx_me/JAD/datasets/DOTA_mini/trainval', '/mnt/disk/cxjyxx_me/JAD/datasets/DOTA_mini/splits/trainval', gap=150, subsize=600)
-# main('/mnt/disk/cxjyxx_me/JAD/datasets/DOTA_mini/test', '/mnt/disk/cxjyxx_me/JAD/datasets/DOTA_mini/splits/test', gap=150, subsize=600)
+# main('datasets/DOTA/trainval', 'datasets/DOTA/splits/trainval', gap=150, subsize=600)
+# main('datasets/DOTA_mini/trainval', 'datasets/DOTA_mini/splits/trainval', gap=150, subsize=600)
+# main('datasets/DOTA_mini/test', 'datasets/DOTA_mini/splits/test', gap=150, subsize=600)
