@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import sys
 import os
+
 curr_path = os.path.dirname(__file__)
 sys.path.extend([
     os.path.join(curr_path, './'),
@@ -33,7 +34,6 @@ class Pipeline:
         image = Image.fromarray(image)
         signboard_bbox_list = list()
         text_list = list()
-        # jt.display_memory_info()
         
         # Step 1 JDet
         signboard_bboxes = self.model1.infer(image)
