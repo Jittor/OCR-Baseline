@@ -48,20 +48,17 @@ Jittor 前端语言为 Python，使用了主流的包含模块化和动态图执
 请移步到各模型目录下阅读 ```README.md```。
 
 ### 评测
-第一步，根据街景图像，进行预测。请执行：
+
+请先确认 ```model.py``` 文件中，模型路径已配置正确。随后，请执行：
 ```bash
-python prediction.py --image_dir [街景图片目录] --save_dir [保存预测文件目录]
+python evaluate.py
 ```
 
-或许，您需要重新指定模型参数路径，则可按以下方式执行：
+或者，设置其他参数进行评测：
 ```bash
-python prediction.py -i [街景图片目录] -s [保存预测文件目录] -j [JDet模型参数路径] -p [PixelLink模型参数路径] -c [CRNN模型参数路径]
+python evaluate.py -i [街景图片目录] -g [真实标签目录] -t1 [文字对比阈值] -t2 [边框对比阈值]
 ```
 
-第二步，根据预测结果，进行评测。请执行：
-```bash
-python evaluation.py --pred_dir [预测文件目录] --gt_dir [真实值文件目录]
-```
 
 
 
