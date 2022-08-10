@@ -10,22 +10,26 @@ sys.path.extend([
     os.path.join(curr_path, './PixelLink'),
     os.path.join(curr_path, './CRNN'),
     os.path.join(curr_path, './CRNN/src'),
-    ])
+])
 from JDet.step1 import Step1
 from PixelLink.step2 import Step2
 from CRNN.step3 import Step3
 
-curr_path = os.path.dirname(__file__)
+# Setting
+JDet_PATH = "/project/train/models/JDet.pkl"
+PixelLink_PATH = "/project/train/models/PixelLink.pkl"
+CRNN_PATH = "/project/train/models/CRNN.pkl"
+JDet_CFG_PATH = './JDet/store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py'
 
 
 class Pipeline:
     def __init__(self,
-                 jdet_path=os.path.join(curr_path, "/project/train/models/JDet.pkl"),
-                 pixellink_path=os.path.join(curr_path, "/project/train/models/PixelLink.pkl"),
-                 crnn_path=os.path.join(curr_path, "/project/train/models/CRNN.pkl"),
+                 jdet_path=os.path.join(curr_path, JDet_PATH),
+                 pixellink_path=os.path.join(curr_path, PixelLink_PATH),
+                 crnn_path=os.path.join(curr_path, CRNN_PATH),
                  ):
         # Load models
-        self.model1 = Step1(os.path.join(curr_path, './JDet/store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py'), jdet_path)
+        self.model1 = Step1(os.path.join(curr_path, JDet_CFG_PATH), jdet_path)
         self.model2 = Step2(pixellink_path)
         self.model3 = Step3(crnn_path)
 
@@ -34,7 +38,7 @@ class Pipeline:
         image = Image.fromarray(image)
         signboard_bbox_list = list()
         text_list = list()
-        
+
         # Step 1 JDet
         signboard_bboxes = self.model1.infer(image)
         signboards = list()
