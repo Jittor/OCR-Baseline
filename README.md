@@ -1,4 +1,4 @@
-# 粤港澳街景图像中店面招牌文字识别比赛
+# 粤港澳大湾区（黄埔）国际算法算例大赛  <br/>街景图像店面招牌文字识别
 
 本仓库是官方提供的 Baseline 代码，为了方便各位选手使用和交流我们的官方 Baseline 代码和计图框架，我们创建了官方 QQ 群聊 640858766，后续比赛通知、代码更新、技术讨论都会在这个群进行，请扫下面的二维码入群。
 
@@ -37,8 +37,7 @@ Jittor 前端语言为 Python，使用了主流的包含模块化和动态图执
 ### *示例：*
 
 
-<img src="https://user-images.githubusercontent.com/73881739/182287493-a53ecba5-6b74-487e-bba8-2712d2771f9a.png" height="450">
-
+![readme_img](https://user-images.githubusercontent.com/73881739/183820007-ee940f95-15f6-4e7d-9c92-fa9c764f70ed.jpg)
 
 
 
