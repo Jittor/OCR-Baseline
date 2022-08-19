@@ -159,7 +159,8 @@ def get_pred_json(img_dir):
         input_image = cv2.imread(img_path)
         img_pred_json = process_image(model, input_image, args=None)
         img_pred = json.loads(img_pred_json)
-        pred_dict[img_id] = [i["points"] + [i["name"]] for i in img_pred["model_data"]["objects"]]
+        pred_dict[img_id] = [i["points"] + [i["name"]]
+                             for i in img_pred["model_data"]["objects"]]
     pred_json = json.dumps(pred_dict)
     return pred_json
 
@@ -167,20 +168,21 @@ def get_pred_json(img_dir):
 def main():
     gt_json = get_gt_json(gt_dir=args.gt)
     pred_json = get_pred_json(img_dir=args.img)
-    acc, recall = evaluate(pred_json, gt_json, threshold_text=args.threshold_text, threshold_box=args.threshold_box)
+    acc, recall = evaluate(
+        pred_json, gt_json, threshold_text=args.threshold_text, threshold_box=args.threshold_box)
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-i",
                         "--img",
-                        default="/home/data/1304",
+                        default="/home/data/1411",
                         type=str,
                         help="path of images.",
                         metavar="IMAGE PATH")
     parser.add_argument("-g",
                         "--gt",
-                        default="/home/data/1304",
+                        default="/home/data/1411",
                         type=str,
                         help="path of ground truth.",
                         metavar="GT PATH")

@@ -53,7 +53,7 @@ class Step2:
 
 if __name__ == "__main__":
     step2 = Step2('/project/train/models/PixelLink.pkl')
-    img = Image.open('/home/data/1306/016201_1508424072625001_1.jpg').convert("RGB")
+    img = Image.open('/home/data/1414/016201_1508424072625001_1.jpg').convert("RGB")
     results = step2.infer(img)
     for i, result in enumerate(results):
         iw, ih = img.size

@@ -27,8 +27,8 @@ class Config(object):
         self.neg_pos_ratio = 3  # parameter r in paper
 
         self.dataset_path = "/home/data"
-        self.images_dir = os.path.join(self.dataset_path, '1306')
-        self.labels_dir = os.path.join(self.dataset_path, '1306')
+        self.images_dir = os.path.join(self.dataset_path, '1414')
+        self.labels_dir = os.path.join(self.dataset_path, '1414')
 
         self.save_dir = os.path.join(curr_path, "work_dirs/")
 

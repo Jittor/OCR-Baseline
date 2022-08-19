@@ -1,59 +1,64 @@
+from jdet.utils.registry import build_from_cfg, MODELS, DATASETS, OPTIMS
+import pickle as pk
+import os
+import argparse
+import jdet
+import random
+import numpy as np
+from jdet.utils.general import parse_losses
+from jdet.config import init_cfg, get_cfg
 import jittor as jt
 jt.set_global_seed(0)
-from jdet.config import init_cfg, get_cfg
-from jdet.utils.general import parse_losses
-from jdet.utils.registry import build_from_cfg,MODELS,DATASETS,OPTIMS
-import numpy as np
-import random
-import jdet
-import argparse
-import os
-import pickle as pk
 
-import numpy as np
 
-def fake_argsort(x, dim=0,descending=False):
+def fake_argsort(x, dim=0, descending=False):
     return jt.index(x)[0], x
 
-def fake_argsort2(x, dim=0,descending=False):
+
+def fake_argsort2(x, dim=0, descending=False):
     x_ = x.data
     if (descending):
         x__ = -x_
     else:
         x__ = x_
-    index_ = np.argsort(x__, axis=dim,kind="stable")
+    index_ = np.argsort(x__, axis=dim, kind="stable")
     y_ = x_[index_]
 
     index = jt.array(index_)
     y = jt.array(y_)
     return index, y
 
+
 def fake_sort2(x):
     x_ = x.data
-    y_ = np.sort(x,kind="stable")
+    y_ = np.sort(x, kind="stable")
     y = jt.array(y_)
     return y
 
-jt.sort=fake_sort2
+
+jt.sort = fake_sort2
 jt.argsort = fake_argsort2
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Jittor Object Detection Training")
+    parser = argparse.ArgumentParser(
+        description="Jittor Object Detection Training")
     parser.add_argument(
         "--set_data",
         action='store_true'
     )
     args = parser.parse_args()
 
-    jt.flags.use_cuda=1
+    jt.flags.use_cuda = 1
     jt.set_global_seed(0)
     np.random.seed(0)
     random.seed(0)
     init_cfg("configs/faster_rcnn_obb_r50_fpn_1x_dota_test.py")
     cfg = get_cfg()
 
-    model = build_from_cfg(cfg.model,MODELS)
-    optimizer = build_from_cfg(cfg.optimizer,OPTIMS,params= model.parameters())
+    model = build_from_cfg(cfg.model, MODELS)
+    optimizer = build_from_cfg(
+        cfg.optimizer, OPTIMS, params=model.parameters())
 
     model.train()
     # correct_loss =[[0.6910267472267151, 0.015082551166415215, 2.7885429859161377, 0.1953125, 0.05786817893385887, 3.552520513534546],
@@ -64,26 +69,26 @@ def main():
     # [0.6526368856430054, 0.04270350933074951, 0.7479208111763, 99.4140625, 0.040559880435466766, 1.4838210344314575],
     # [0.6510735154151917, 0.3285956382751465, 2.2181060314178467, 90.8203125, 0.546872615814209, 3.744647741317749],
     # [0.5742478370666504, 0.03992677107453346, 0.4423956573009491, 97.8515625, 0.1069965660572052, 1.1635668277740479],
-    # [0.5168476700782776, 0.009665747173130512, 0.3958197236061096, 98.6328125, 0.03502177819609642, 0.9573549032211304],
+    # [0.5168476700782776, 0.009665747173141312, 0.3958197236061096, 98.6328125, 0.03502177819609642, 0.9573549032211304],
     # [0.7065381407737732, 0.9011915326118469, 0.8094715476036072, 89.94140625, 0.4663526713848114, 2.883553981781006],
     # [0.6244182586669922, 0.15812541544437408, 0.7723376750946045, 89.84375, 0.35137325525283813, 1.906254529953003]]
     # thr = 0.1
     if (args.set_data):
-        os.makedirs("test_datas_faster_rcnn",exist_ok=True)
+        os.makedirs("test_datas_faster_rcnn", exist_ok=True)
         jt.save(model.state_dict(), "test_datas_faster_rcnn/model.pk")
 
         imagess = []
         targetss = []
         correct_loss = []
 
-        train_dataset = build_from_cfg(cfg.dataset.train,DATASETS)
-        for batch_idx,(images,targets) in enumerate(train_dataset):
+        train_dataset = build_from_cfg(cfg.dataset.train, DATASETS)
+        for batch_idx, (images, targets) in enumerate(train_dataset):
             print(batch_idx)
             if (batch_idx > 10):
                 break
             imagess.append(jdet.utils.general.sync(images))
             targetss.append(jdet.utils.general.sync(targets))
-            losses = model(images,targets)
+            losses = model(images, targets)
             all_loss, losses = parse_losses(losses)
             jt.sync_all(True)
             correct_loss.append(all_loss.item())
@@ -103,22 +108,24 @@ def main():
         imagess = jdet.utils.general.to_jt_var(data["imagess"])
         targetss = jdet.utils.general.to_jt_var(data["targetss"])
         correct_loss = data["correct_loss"]
-        thr = 0.5           #TODO: fix thr
+        thr = 0.5  # TODO: fix thr
         for batch_idx in range(len(imagess)):
             images = imagess[batch_idx]
             targets = targetss[batch_idx]
 
-            losses = model(images,targets)
+            losses = model(images, targets)
             all_loss, losses = parse_losses(losses)
             jt.sync_all(True)
             l = all_loss.item()
             optimizer.step(all_loss)
             c_l = correct_loss[batch_idx]
             err_rate = float(abs(c_l - l)/np.minimum(c_l, l))
-            print(f"correct loss is {float(c_l):.4f}, runtime loss is {float(l):.4f}, err rate is {err_rate*100:.2f}%")
-            assert err_rate<thr,f"LOSS is not correct, please check it"
+            print(
+                f"correct loss is {float(c_l):.4f}, runtime loss is {float(l):.4f}, err rate is {err_rate*100:.2f}%")
+            assert err_rate < thr, f"LOSS is not correct, please check it"
         print(f"Loss is correct with err_rate<{thr}")
     print("success!")
-    
+
+
 if __name__ == "__main__":
     main()

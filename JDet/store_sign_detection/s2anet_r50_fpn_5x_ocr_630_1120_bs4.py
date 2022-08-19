@@ -84,8 +84,8 @@ dataset = dict(
     train=dict(
         type="OCRDataset",
         dataset_dir='/home/data',
-        img_dir='1305',
-        gt_dir='1305',
+        img_dir='1413',
+        gt_dir='1413',
         transforms=[
             dict(
                 type="RotatedResize",
@@ -111,8 +111,8 @@ dataset = dict(
     val=dict(
         type="OCRDataset",
         dataset_dir='/home/data',
-        img_dir='1305',
-        gt_dir='1305',
+        img_dir='1413',
+        gt_dir='1413',
         transforms=[
             dict(
                 type="RotatedResize",

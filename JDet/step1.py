@@ -66,7 +66,7 @@ if __name__ == "__main__":
     step1 = Step1('store_sign_detection/s2anet_r50_fpn_5x_ocr_630_1120_bs4.py',
                   'work_dirs/s2anet_r50_fpn_5x_ocr_630_1120_bs4/checkpoints/ckpt_43.pkl')
     img = Image.open(
-        '/home/data/1305/011284_1508290961970980.jpg').convert("RGB")
+        '/home/data/1413/011284_1508290961970980.jpg').convert("RGB")
     results = step1.infer(img)
     iw, ih = img.size
     for i, result in enumerate(results):

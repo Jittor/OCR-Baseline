@@ -1,3 +1,6 @@
+from CRNN.step3 import Step3
+from PixelLink.step2 import Step2
+from JDet.step1 import Step1
 from PIL import Image
 import numpy as np
 import cv2
@@ -11,9 +14,6 @@ sys.path.extend([
     os.path.join(curr_path, './CRNN'),
     os.path.join(curr_path, './CRNN/src'),
 ])
-from JDet.step1 import Step1
-from PixelLink.step2 import Step2
-from CRNN.step3 import Step3
 
 # Setting
 JDet_PATH = "/project/train/models/JDet.pkl"
@@ -120,7 +120,8 @@ def crop_img(bounding_box, img):
     x_2, y_2, w_2, h_2 = get_xywh(bounding_box)
     if x_2 > iw or y_2 > ih or w_2 == 0 or h_2 == 0:
         return None
-    new_img = Image.fromarray(np.array(img)[y_2:min(y_2 + h_2, ih), x_2:min(x_2 + w_2, iw)])
+    new_img = Image.fromarray(
+        np.array(img)[y_2:min(y_2 + h_2, ih), x_2:min(x_2 + w_2, iw)])
     return new_img
 
 
@@ -143,6 +144,6 @@ def output_result(texts, signboard_boxes):
 
 if __name__ == "__main__":
     pipeline = Pipeline()
-    img = cv2.imread('/home/data/1305/011284_1508290961970980.jpg')
+    img = cv2.imread('/home/data/1413/011284_1508290961970980.jpg')
     results = pipeline(img)
     print(results)

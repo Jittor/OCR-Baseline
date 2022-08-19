@@ -22,8 +22,8 @@ save_interval = valid_interval * 2  # 8000
 
 datasets_path = os.path.join("/home/data")
 
-images_dir = os.path.join(datasets_path, '1306')
-labels_dir = os.path.join(datasets_path, '1306')
+images_dir = os.path.join(datasets_path, '1414')
+labels_dir = os.path.join(datasets_path, '1414')
 
 # pretrain dataset - Synthetic Chinese String Dataset
 pretrain_images_dir = "dataset/chinese/images/"

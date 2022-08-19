@@ -36,6 +36,6 @@ class Step3:
 
 if __name__ == "__main__":
     step3 = Step3('/project/train/models/CRNN.pkl')
-    img = Image.open('/home/data/1306/016201_1508424072625001_1.jpg')
+    img = Image.open('/home/data/1414/016201_1508424072625001_1.jpg')
     results = step3.infer(img)
     print(results)
