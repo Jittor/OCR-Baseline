@@ -158,6 +158,6 @@ logger = dict(
 # runtime settings
 max_epoch = 60
 eval_interval = 6
-checkpoint_interval = 1
+checkpoint_interval = 3
 log_interval = 20
 work_dir = "/project/train/models"
