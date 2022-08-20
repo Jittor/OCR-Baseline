@@ -1,6 +1,3 @@
-from CRNN.step3 import Step3
-from PixelLink.step2 import Step2
-from JDet.step1 import Step1
 from PIL import Image
 import numpy as np
 import cv2
@@ -14,6 +11,9 @@ sys.path.extend([
     os.path.join(curr_path, './CRNN'),
     os.path.join(curr_path, './CRNN/src'),
 ])
+from CRNN.step3 import Step3
+from PixelLink.step2 import Step2
+from JDet.step1 import Step1
 
 # Setting
 JDet_PATH = "/project/train/models/JDet.pkl"
