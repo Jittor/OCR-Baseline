@@ -40,8 +40,8 @@ sh training_train.sh
 执行评估：
 ```python
 cd /project/train/src_repo/OCR-Baseline-main/JDet
-# 编码环境训练
+# 编码环境评估
 sh coding_eval.sh
-# 训练环境训练
+# 训练环境评估
 sh training_eval.sh
 ```
