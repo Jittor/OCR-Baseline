@@ -78,7 +78,7 @@ def train(model, dataloader, val_dataloader, epoch, optimizer, scheduler, start_
     os.makedirs(exp_dir, exist_ok=True)
 
     if start_epoch > 0:
-        model.load(os.path.join(exp_dir, 'epoch_'+str(start_epoch)+'pkl'))
+        model.load(os.path.join(exp_dir, 'epoch_'+str(start_epoch)+'.pkl'))
 
     for i in range(start_epoch, epoch):
         model.train()
