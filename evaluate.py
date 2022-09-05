@@ -102,15 +102,17 @@ def evaluate(pred_json, gt_json, threshold_text, threshold_box):
         gt_num += len(gt_texts)
         pred_num += len(pred_texts)
 
+        matched_i = list()
         matched_j = list()
         for i in range(len(gt_texts)):
             for j in range(len(pred_texts)):
-                if j in matched_j:
+                if i in matched_i or j in matched_j:
                     continue
                 score_text = count_similarity(gt_texts[i], pred_texts[j])
                 score_bbox = cal_iou(gt_boxes[i], pred_boxes[j])
                 if score_text >= threshold_text and score_bbox >= threshold_box:  # correct prediction
                     correct_num += 1
+                    matched_i.append(i)
                     matched_j.append(j)
     pbar.close()
 
