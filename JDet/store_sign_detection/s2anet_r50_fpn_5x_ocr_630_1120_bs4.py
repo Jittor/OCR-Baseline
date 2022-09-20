@@ -103,8 +103,8 @@ dataset = dict(
                 to_bgr=False,)
 
         ],
-        batch_size=4,
-        num_workers=4,
+        batch_size=2,
+        num_workers=2,
         shuffle=True,
         filter_empty_gt=False
     ),
